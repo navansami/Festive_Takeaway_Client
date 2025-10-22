@@ -8,6 +8,7 @@ import Orders from './pages/Orders';
 import OrderForm from './pages/OrderForm';
 import OrderDetail from './pages/OrderDetail';
 import MenuItems from './pages/MenuItems';
+import Users from './pages/Users';
 import Analytics from './pages/Analytics';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <Route path="orders/:id" element={<OrderDetail />} />
             <Route path="orders/:id/edit" element={<OrderForm />} />
             <Route path="menu-items" element={<MenuItems />} />
+            <Route path="users" element={<Users />} />
             <Route path="analytics" element={<Analytics />} />
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

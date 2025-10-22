@@ -1,0 +1,52 @@
+.users-page {
+  max-width: 1200px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-badge.role-admin {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.role-badge.role-order-taker {
+  background-color: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.role-badge.role-operations {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons button {
+    width: 100%;
+  }
+}

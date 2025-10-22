@@ -1,6 +1,6 @@
 # Turkey Take-Away - Frontend
 
-Professional order management system for Fairmont The Palm's festive takeaway service.
+Professional order management system for festive takeaway service.
 
 ## Features
 
