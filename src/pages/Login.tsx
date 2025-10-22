@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import ChangePasswordModal from '../components/ChangePasswordModal';
 import './Login.css';
 
 const Login: React.FC = () => {
@@ -8,6 +9,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -17,8 +19,13 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      const mustChangePassword = await login(email, password);
+
+      if (mustChangePassword) {
+        setShowPasswordChange(true);
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -26,9 +33,19 @@ const Login: React.FC = () => {
     }
   };
 
+  const handlePasswordChanged = () => {
+    setShowPasswordChange(false);
+    navigate('/dashboard');
+  };
+
   return (
-    <div className="login-container">
-      <div className="login-card card">
+    <>
+      {showPasswordChange && (
+        <ChangePasswordModal onPasswordChanged={handlePasswordChanged} />
+      )}
+
+      <div className="login-container">
+        <div className="login-card card">
         <div className="login-header">
           <h1>Turkey Take-Away</h1>
           <p>Festive Order Management System</p>
@@ -73,6 +90,7 @@ const Login: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

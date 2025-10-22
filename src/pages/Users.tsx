@@ -16,7 +16,7 @@ const Users: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
+    password: 'Changeme',
     role: UserRole.ORDER_TAKER as UserRole,
     isActive: true,
   });
@@ -52,7 +52,7 @@ const Users: React.FC = () => {
       setFormData({
         name: '',
         email: '',
-        password: '',
+        password: 'Changeme',
         role: UserRole.ORDER_TAKER as UserRole,
         isActive: true,
       });
@@ -270,7 +270,7 @@ const Users: React.FC = () => {
                     <small>Leave blank to keep the current password</small>
                   )}
                   {!editingUser && (
-                    <small>Minimum 6 characters</small>
+                    <small>Default password is "Changeme". Users must change it on first login.</small>
                   )}
                 </div>
 

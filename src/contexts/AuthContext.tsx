@@ -5,7 +5,7 @@ import api from '../services/api';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -35,11 +35,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     initAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await api.login(email, password) as AuthResponse;
       localStorage.setItem('token', response.token);
       setUser(response.user);
+      return response.mustChangePassword || false;
     } catch (error) {
       throw error;
     }

@@ -141,6 +141,7 @@ export interface Order {
 export interface AuthResponse {
   token: string;
   user: User;
+  mustChangePassword?: boolean;
 }
 
 export interface LoginCredentials {
