@@ -1,0 +1,34 @@
+.analytics-page {
+  max-width: 800px;
+}
+
+.export-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: var(--spacing-lg);
+  align-items: end;
+}
+
+.quick-ranges {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .export-form {
+    grid-template-columns: 1fr;
+  }
+
+  .export-form button {
+    width: 100%;
+  }
+
+  .quick-ranges {
+    flex-direction: column;
+  }
+
+  .quick-ranges button {
+    width: 100%;
+  }
+}
