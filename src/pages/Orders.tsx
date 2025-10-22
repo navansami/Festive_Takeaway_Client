@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Order } from '../types';
 import { OrderStatus, PaymentStatus } from '../types';
 import api from '../services/api';
+import { Plus, Search, Eye, ShoppingBag } from 'lucide-react';
 import './Orders.css';
 
 const Orders: React.FC = () => {
@@ -100,7 +101,8 @@ const Orders: React.FC = () => {
           className="btn-primary"
           onClick={() => navigate('/dashboard/orders/new')}
         >
-          + New Order
+          <Plus size={18} />
+          <span>New Order</span>
         </button>
       </div>
 
@@ -108,15 +110,18 @@ const Orders: React.FC = () => {
 
       <div className="card">
         <div className="filters">
-          <input
-            type="text"
-            placeholder="Search by order number, name, or email..."
-            value={filters.search}
-            onChange={(e) =>
-              setFilters({ ...filters, search: e.target.value })
-            }
-            className="search-input"
-          />
+          <div className="search-wrapper">
+            <Search className="search-icon" size={18} />
+            <input
+              type="text"
+              placeholder="Search by order number, name, or email..."
+              value={filters.search}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value })
+              }
+              className="search-input"
+            />
+          </div>
 
           <select
             value={filters.status}
@@ -147,6 +152,7 @@ const Orders: React.FC = () => {
 
         {filteredOrders.length === 0 ? (
           <div className="empty-state">
+            <ShoppingBag size={48} className="empty-state-icon" />
             <p>No orders found</p>
           </div>
         ) : (
@@ -198,7 +204,8 @@ const Orders: React.FC = () => {
                         className="btn-secondary btn-sm"
                         onClick={() => navigate(`/dashboard/orders/${order._id}`)}
                       >
-                        View
+                        <Eye size={16} />
+                        <span>View</span>
                       </button>
                     </td>
                   </tr>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import { Download, Calendar, Clock } from 'lucide-react';
 import './Analytics.css';
 
 const Analytics: React.FC = () => {
@@ -68,7 +69,14 @@ const Analytics: React.FC = () => {
             onClick={handleExport}
             disabled={loading}
           >
-            {loading ? 'Exporting...' : 'Export to Excel'}
+            {loading ? (
+              <span>Exporting...</span>
+            ) : (
+              <>
+                <Download size={18} />
+                <span>Export to Excel</span>
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -86,7 +94,8 @@ const Analytics: React.FC = () => {
               setStartDate(weekAgo.toISOString().split('T')[0]);
             }}
           >
-            Last 7 Days
+            <Clock size={16} />
+            <span>Last 7 Days</span>
           </button>
           <button
             className="btn-secondary"
@@ -98,7 +107,8 @@ const Analytics: React.FC = () => {
               setStartDate(monthAgo.toISOString().split('T')[0]);
             }}
           >
-            Last 30 Days
+            <Calendar size={16} />
+            <span>Last 30 Days</span>
           </button>
           <button
             className="btn-secondary"
@@ -109,7 +119,8 @@ const Analytics: React.FC = () => {
               setStartDate(start.toISOString().split('T')[0]);
             }}
           >
-            This Month
+            <Calendar size={16} />
+            <span>This Month</span>
           </button>
         </div>
       </div>

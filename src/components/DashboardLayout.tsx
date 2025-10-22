@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { UserRole } from '../types';
+import { LayoutDashboard, ShoppingBag, UtensilsCrossed, Users, TrendingUp, LogOut } from 'lucide-react';
 import './DashboardLayout.css';
 
 const DashboardLayout: React.FC = () => {
@@ -23,31 +24,31 @@ const DashboardLayout: React.FC = () => {
 
         <nav className="sidebar-nav">
           <NavLink to="/dashboard" end className="nav-link">
-            <span className="nav-icon">📊</span>
+            <LayoutDashboard className="nav-icon" size={20} />
             <span>Dashboard</span>
           </NavLink>
 
           <NavLink to="/dashboard/orders" className="nav-link">
-            <span className="nav-icon">📋</span>
+            <ShoppingBag className="nav-icon" size={20} />
             <span>Orders</span>
           </NavLink>
 
           {user?.role === UserRole.ADMIN && (
             <NavLink to="/dashboard/menu-items" className="nav-link">
-              <span className="nav-icon">🍽️</span>
+              <UtensilsCrossed className="nav-icon" size={20} />
               <span>Menu Items</span>
             </NavLink>
           )}
 
           {user?.role === UserRole.ADMIN && (
             <NavLink to="/dashboard/users" className="nav-link">
-              <span className="nav-icon">👥</span>
+              <Users className="nav-icon" size={20} />
               <span>Users</span>
             </NavLink>
           )}
 
           <NavLink to="/dashboard/analytics" className="nav-link">
-            <span className="nav-icon">📈</span>
+            <TrendingUp className="nav-icon" size={20} />
             <span>Analytics</span>
           </NavLink>
         </nav>
@@ -62,8 +63,9 @@ const DashboardLayout: React.FC = () => {
               <p className="user-role">{user?.role}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="btn-secondary w-full">
-            Logout
+          <button onClick={handleLogout} className="btn-secondary w-full logout-btn">
+            <LogOut size={18} />
+            <span>Logout</span>
           </button>
         </div>
       </aside>

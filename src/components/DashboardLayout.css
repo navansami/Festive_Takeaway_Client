@@ -10,10 +10,11 @@
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   height: 100vh;
+  z-index: 10;
 }
 
 .sidebar-header {
@@ -22,15 +23,18 @@
 }
 
 .sidebar-header h2 {
-  font-size: 1.5rem;
-  color: var(--color-black);
+  font-size: 1.25rem;
+  color: var(--color-primary);
   margin-bottom: var(--spacing-xs);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .sidebar-header p {
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.813rem;
   margin: 0;
+  font-weight: 500;
 }
 
 .sidebar-nav {
@@ -43,30 +47,38 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 0.75rem var(--spacing-lg);
+  margin: 0.125rem var(--spacing-md);
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: all 0.2s;
-  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.938rem;
 }
 
 .nav-link:hover {
-  background-color: var(--color-grey-50);
+  background-color: var(--color-grey-100);
   color: var(--color-primary);
   text-decoration: none;
+  transform: translateX(2px);
 }
 
 .nav-link.active {
   background-color: var(--color-primary-light);
   color: var(--color-primary);
-  border-left-color: var(--color-primary);
   font-weight: 600;
+  box-shadow: var(--shadow-xs);
 }
 
 .nav-icon {
-  font-size: 1.25rem;
-  width: 24px;
-  text-align: center;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.nav-link.active .nav-icon,
+.nav-link:hover .nav-icon {
+  opacity: 1;
 }
 
 .sidebar-footer {
@@ -85,13 +97,14 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
   color: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 1.125rem;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .user-details {
@@ -101,19 +114,33 @@
 
 .user-name {
   font-weight: 600;
-  color: var(--color-black);
-  margin: 0;
+  color: var(--color-text-primary);
+  margin: 0 0 0.125rem 0;
   font-size: 0.875rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .user-role {
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
   font-size: 0.75rem;
   margin: 0;
   text-transform: capitalize;
+  line-height: 1.2;
+}
+
+.logout-btn {
+  gap: var(--spacing-sm);
+  justify-content: center;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover:not(:disabled) {
+  background-color: var(--color-grey-200);
+  transform: translateY(-1px);
 }
 
 .main-content {

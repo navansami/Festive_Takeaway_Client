@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import type { User } from '../types';
 import { UserRole } from '../types';
 import api from '../services/api';
+import { Edit2, Trash2, UserPlus } from 'lucide-react';
 import './Users.css';
 
 const Users: React.FC = () => {
@@ -138,7 +139,8 @@ const Users: React.FC = () => {
           <p>Manage system users and permissions</p>
         </div>
         <button className="btn-primary" onClick={() => handleOpenModal()}>
-          + Add User
+          <UserPlus size={18} />
+          <span>Add User</span>
         </button>
       </div>
 
@@ -191,14 +193,16 @@ const Users: React.FC = () => {
                         className="btn-secondary btn-sm"
                         onClick={() => handleOpenModal(user)}
                       >
-                        Edit
+                        <Edit2 size={14} />
+                        <span>Edit</span>
                       </button>
                       <button
                         className="btn-danger btn-sm"
                         onClick={() => handleDelete(user._id)}
                         disabled={user._id === currentUser._id}
                       >
-                        Delete
+                        <Trash2 size={14} />
+                        <span>Delete</span>
                       </button>
                     </div>
                   </td>

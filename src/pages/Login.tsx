@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import ChangePasswordModal from '../components/ChangePasswordModal';
+import { UtensilsCrossed, Mail, Lock, LogIn } from 'lucide-react';
 import './Login.css';
 
 const Login: React.FC = () => {
@@ -47,6 +48,9 @@ const Login: React.FC = () => {
       <div className="login-container">
         <div className="login-card card">
         <div className="login-header">
+          <div className="login-icon">
+            <UtensilsCrossed size={40} />
+          </div>
           <h1>Turkey Take-Away</h1>
           <p>Festive Order Management System</p>
         </div>
@@ -56,32 +60,45 @@ const Login: React.FC = () => {
 
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your.email@fairmont.com"
-              required
-              autoComplete="email"
-            />
+            <div className="input-with-icon">
+              <Mail className="input-icon" size={18} />
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your.email@fairmont.com"
+                required
+                autoComplete="email"
+              />
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              autoComplete="current-password"
-            />
+            <div className="input-with-icon">
+              <Lock className="input-icon" size={18} />
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+                autoComplete="current-password"
+              />
+            </div>
           </div>
 
-          <button type="submit" className="btn-primary w-full" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+          <button type="submit" className="btn-primary w-full login-btn" disabled={loading}>
+            {loading ? (
+              <span>Signing in...</span>
+            ) : (
+              <>
+                <LogIn size={18} />
+                <span>Sign In</span>
+              </>
+            )}
           </button>
         </form>
 

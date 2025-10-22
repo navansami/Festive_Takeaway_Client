@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Order } from '../types';
 import { OrderStatus } from '../types';
 import api from '../services/api';
+import { Package, Clock, CheckCircle, Sparkles, DollarSign, CreditCard, Plus } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
@@ -63,7 +64,9 @@ const Dashboard: React.FC = () => {
 
       <div className="stats-grid">
         <div className="stat-card card">
-          <div className="stat-icon">📦</div>
+          <div className="stat-icon stat-icon-primary">
+            <Package size={28} />
+          </div>
           <div className="stat-details">
             <p className="stat-label">Total Orders</p>
             <h2 className="stat-value">{stats.total}</h2>
@@ -71,7 +74,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="stat-card card">
-          <div className="stat-icon">⏳</div>
+          <div className="stat-icon stat-icon-warning">
+            <Clock size={28} />
+          </div>
           <div className="stat-details">
             <p className="stat-label">Pending</p>
             <h2 className="stat-value">{stats.pending}</h2>
@@ -79,7 +84,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="stat-card card">
-          <div className="stat-icon">✅</div>
+          <div className="stat-icon stat-icon-info">
+            <CheckCircle size={28} />
+          </div>
           <div className="stat-details">
             <p className="stat-label">Confirmed</p>
             <h2 className="stat-value">{stats.confirmed}</h2>
@@ -87,7 +94,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="stat-card card">
-          <div className="stat-icon">✨</div>
+          <div className="stat-icon stat-icon-success">
+            <Sparkles size={28} />
+          </div>
           <div className="stat-details">
             <p className="stat-label">Collected</p>
             <h2 className="stat-value">{stats.collected}</h2>
@@ -95,7 +104,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="stat-card card">
-          <div className="stat-icon">💰</div>
+          <div className="stat-icon stat-icon-primary">
+            <DollarSign size={28} />
+          </div>
           <div className="stat-details">
             <p className="stat-label">Total Revenue</p>
             <h2 className="stat-value">AED {stats.totalRevenue.toFixed(2)}</h2>
@@ -103,7 +114,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="stat-card card">
-          <div className="stat-icon">💳</div>
+          <div className="stat-icon stat-icon-success">
+            <CreditCard size={28} />
+          </div>
           <div className="stat-details">
             <p className="stat-label">Total Paid</p>
             <h2 className="stat-value">AED {stats.totalPaid.toFixed(2)}</h2>
@@ -115,22 +128,33 @@ const Dashboard: React.FC = () => {
         <div className="card">
           <div className="section-header">
             <h3>Recent Orders</h3>
-            <button
-              className="btn-secondary btn-sm"
-              onClick={() => navigate('/dashboard/orders')}
-            >
-              View All
-            </button>
+            <div className="flex gap-sm">
+              <button
+                className="btn-primary btn-sm"
+                onClick={() => navigate('/dashboard/orders/new')}
+              >
+                <Plus size={16} />
+                <span>New Order</span>
+              </button>
+              <button
+                className="btn-secondary btn-sm"
+                onClick={() => navigate('/dashboard/orders')}
+              >
+                View All
+              </button>
+            </div>
           </div>
 
           {recentOrders.length === 0 ? (
             <div className="empty-state">
+              <Package size={48} className="empty-state-icon" />
               <p>No orders yet</p>
               <button
                 className="btn-primary mt-md"
                 onClick={() => navigate('/dashboard/orders/new')}
               >
-                Create Your First Order
+                <Plus size={18} />
+                <span>Create Your First Order</span>
               </button>
             </div>
           ) : (
