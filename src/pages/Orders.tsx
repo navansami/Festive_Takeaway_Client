@@ -4,12 +4,14 @@ import type { Order } from '../types';
 import { OrderStatus, PaymentStatus } from '../types';
 import api from '../services/api';
 import { Plus, Search, Eye, ShoppingBag } from 'lucide-react';
+import OrderModal from '../components/OrderModal';
 import './Orders.css';
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     status: '',
     paymentStatus: '',
@@ -99,7 +101,7 @@ const Orders: React.FC = () => {
         </div>
         <button
           className="btn-primary"
-          onClick={() => navigate('/dashboard/orders/new')}
+          onClick={() => setIsOrderModalOpen(true)}
         >
           <Plus size={18} />
           <span>New Order</span>
@@ -215,6 +217,15 @@ const Orders: React.FC = () => {
           </div>
         )}
       </div>
+
+      <OrderModal
+        isOpen={isOrderModalOpen}
+        onClose={() => setIsOrderModalOpen(false)}
+        onSuccess={() => {
+          fetchOrders();
+          setIsOrderModalOpen(false);
+        }}
+      />
     </div>
   );
 };

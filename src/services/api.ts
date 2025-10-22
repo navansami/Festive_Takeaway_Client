@@ -114,6 +114,10 @@ class ApiService {
     return this.request(`/orders/${id}/change-logs`);
   }
 
+  async searchGuests(query: string) {
+    return this.request(`/orders/search/guests?query=${encodeURIComponent(query)}`);
+  }
+
   // Menu Item endpoints
   async getMenuItems() {
     return this.request('/menu-items');
