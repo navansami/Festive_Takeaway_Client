@@ -26,12 +26,12 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
     // Determine bundle size based on serving size
     const servingLower = turkeyItem.servingSize.toLowerCase();
     if (servingLower.includes('4')) {
-      // AED 650: 2 sides for 4 people (2 portions) + 1 sauce
-      return { size: 4, maxPortions: 2, maxSauces: 1, price: 650 };
+      // AED 650: Choose either 2 sides for 4ppl OR 1 side for 8ppl + 1 sauce
+      return { size: 4, maxPortions: 2, maxSauces: 1, price: 650, noMixing: true };
     } else if (servingLower.includes('8')) {
       // AED 850: 4 portions of sides (can be mixed) + 1 sauce
       // Examples: 2x8ppl OR 2x4ppl+1x8ppl OR 4x4ppl
-      return { size: 8, maxPortions: 4, maxSauces: 1, price: 850 };
+      return { size: 8, maxPortions: 4, maxSauces: 1, price: 850, noMixing: false };
     }
     return null;
   };
@@ -48,26 +48,30 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
 
   // Count included items in bundle (using portion-based logic)
   const getIncludedBundleCounts = () => {
-    if (!turkeyBundle) return { portions: 0, sauces: 0 };
+    if (!turkeyBundle) return { portions: 0, sauces: 0, has4ppl: false, has8ppl: false };
 
     const includedItems = selectedItems.filter(item => item.isIncludedInBundle);
 
+    const sideItems = includedItems.filter(item => {
+      const menuItem = menuItems.find(m => m._id === item.menuItem);
+      return menuItem && (menuItem.category === 'potatoes' || menuItem.category === 'vegetables');
+    });
+
+    // Check if we have any 4ppl or 8ppl sides
+    const has4ppl = sideItems.some(item => item.servingSize.toLowerCase().includes('4'));
+    const has8ppl = sideItems.some(item => item.servingSize.toLowerCase().includes('8'));
+
     // Calculate total portions used for sides
-    const portions = includedItems
-      .filter(item => {
-        const menuItem = menuItems.find(m => m._id === item.menuItem);
-        return menuItem && (menuItem.category === 'potatoes' || menuItem.category === 'vegetables');
-      })
-      .reduce((total, item) => {
-        return total + getPortionsForServingSize(item.servingSize);
-      }, 0);
+    const portions = sideItems.reduce((total, item) => {
+      return total + getPortionsForServingSize(item.servingSize);
+    }, 0);
 
     const sauces = includedItems.filter(item => {
       const menuItem = menuItems.find(m => m._id === item.menuItem);
       return menuItem && menuItem.category === 'sauces';
     }).length;
 
-    return { portions, sauces };
+    return { portions, sauces, has4ppl, has8ppl };
   };
 
   const bundleCounts = getIncludedBundleCounts();
@@ -163,6 +167,18 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
     if (isSide) {
       const portionsNeeded = getPortionsForServingSize(servingSize);
       const remainingPortions = turkeyBundle.maxPortions - bundleCounts.portions;
+
+      // For AED 650 (noMixing = true): Can't mix 4ppl and 8ppl sizes
+      if (turkeyBundle.noMixing) {
+        const is4ppl = servingSize.toLowerCase().includes('4');
+        const is8ppl = servingSize.toLowerCase().includes('8');
+
+        // If we already have 4ppl items, can't add 8ppl
+        if (bundleCounts.has4ppl && is8ppl) return false;
+        // If we already have 8ppl items, can't add 4ppl
+        if (bundleCounts.has8ppl && is4ppl) return false;
+      }
+
       return portionsNeeded <= remainingPortions;
     }
 
@@ -252,7 +268,11 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
             <h4>🎉 Turkey Bundle Active (AED {turkeyBundle.price})</h4>
             <p>
               {turkeyBundle.size === 4 ? (
-                <>Select up to 2 side dishes (for 4 people) and 1 sauce included in your package.</>
+                <>
+                  Choose <strong>either</strong> 2 side dishes for 4 people <strong>OR</strong> 1 side dish for 8 people + 1 sauce included in your package.
+                  {bundleCounts.has4ppl && <> (Currently selecting 4-person sides)</>}
+                  {bundleCounts.has8ppl && <> (Currently selecting 8-person sides)</>}
+                </>
               ) : (
                 <>Select sides worth 4 portions (1 side for 8ppl = 2 portions, 1 side for 4ppl = 1 portion) and 1 sauce included in your package.</>
               )}

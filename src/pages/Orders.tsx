@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Order } from '../types';
 import { OrderStatus, PaymentStatus } from '../types';
 import api from '../services/api';
-import { Plus, Search, Eye, ShoppingBag } from 'lucide-react';
+import { Plus, Search, Eye, ShoppingBag, Calendar, X } from 'lucide-react';
 import OrderModal from '../components/OrderModal';
 import './Orders.css';
 
@@ -16,6 +16,7 @@ const Orders: React.FC = () => {
     status: '',
     paymentStatus: '',
     search: '',
+    collectionDate: '',
   });
 
   const navigate = useNavigate();
@@ -40,6 +41,10 @@ const Orders: React.FC = () => {
     if (filters.status && order.status !== filters.status) return false;
     if (filters.paymentStatus && order.paymentStatus !== filters.paymentStatus)
       return false;
+    if (filters.collectionDate) {
+      const orderDate = new Date(order.collectionDate).toISOString().split('T')[0];
+      if (orderDate !== filters.collectionDate) return false;
+    }
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       return (
@@ -125,6 +130,28 @@ const Orders: React.FC = () => {
             />
           </div>
 
+          <div className="date-filter-wrapper">
+            <Calendar className="filter-icon" size={18} />
+            <input
+              type="date"
+              value={filters.collectionDate}
+              onChange={(e) =>
+                setFilters({ ...filters, collectionDate: e.target.value })
+              }
+              className="date-filter-input"
+              placeholder="Collection Date"
+            />
+            {filters.collectionDate && (
+              <button
+                className="clear-date-btn"
+                onClick={() => setFilters({ ...filters, collectionDate: '' })}
+                title="Clear date filter"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
           <select
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -150,6 +177,16 @@ const Orders: React.FC = () => {
               </option>
             ))}
           </select>
+
+          {(filters.status || filters.paymentStatus || filters.collectionDate || filters.search) && (
+            <button
+              className="btn-secondary btn-sm"
+              onClick={() => setFilters({ status: '', paymentStatus: '', search: '', collectionDate: '' })}
+            >
+              <X size={16} />
+              <span>Clear All Filters</span>
+            </button>
+          )}
         </div>
 
         {filteredOrders.length === 0 ? (
