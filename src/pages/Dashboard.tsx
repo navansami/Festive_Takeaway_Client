@@ -10,7 +10,6 @@ import {
   Calendar,
   Package,
   ArrowUpRight,
-  ArrowDownRight,
 } from 'lucide-react';
 import {
   LineChart,
