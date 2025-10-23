@@ -87,6 +87,7 @@ export interface OrderItem {
   totalPrice: number;
   status: ItemStatus;
   notes?: string;
+  isIncludedInBundle?: boolean; // For items included in Turkey with Sides bundle
 }
 
 export interface PaymentRecord {
@@ -112,9 +113,29 @@ export interface GuestDetails {
   address: string;
 }
 
+export interface Guest {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  notes?: string;
+  dietaryRequirements?: string;
+  preferredContactMethod?: 'email' | 'phone';
+  totalOrders: number;
+  totalSpent: number;
+  lastOrderDate?: string;
+  createdBy: string;
+  lastModifiedBy: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Order {
   _id: string;
   orderNumber: string;
+  guest?: Guest | string; // Can be populated Guest object or just ID
   guestDetails: GuestDetails;
   collectionPerson: {
     name: string;
@@ -147,4 +168,24 @@ export interface AuthResponse {
 export interface LoginCredentials {
   email: string;
   password: string;
+}
+
+export interface PaginationInfo {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface GuestSearchResult {
+  _id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  totalOrders?: number;
+  totalSpent?: number;
+  hasProfile?: boolean;
 }

@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import type { MenuItem, OrderItem } from '../types';
 import { PaymentMethod } from '../types';
 import api from '../services/api';
+import GuestSearch from '../components/GuestSearch';
+import { Plus, X, ShoppingCart } from 'lucide-react';
 import './OrderForm.css';
 
 const OrderForm: React.FC = () => {
@@ -15,7 +17,14 @@ const OrderForm: React.FC = () => {
   const [error, setError] = useState('');
 
   // Form state
-  const [guestDetails, setGuestDetails] = useState({
+  const [guestId, setGuestId] = useState<string | undefined>();
+  const [guestDetails, setGuestDetails] = useState<{
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    _id?: string;
+  }>({
     name: '',
     email: '',
     phone: '',
@@ -58,12 +67,25 @@ const OrderForm: React.FC = () => {
       const response = await api.getOrderById(id) as { order: any };
       const order = response.order;
 
+      // Set guest details
       setGuestDetails(order.guestDetails);
+      if (order.guest) {
+        setGuestId(typeof order.guest === 'string' ? order.guest : order.guest._id);
+      }
+
       setCollectionPerson(order.collectionPerson);
       setCollectionDate(order.collectionDate.split('T')[0]);
       setCollectionTime(order.collectionTime);
       setPaymentMethod(order.paymentMethod);
-      setOrderItems(order.items);
+
+      // Fix: Extract menuItem ID from populated menuItem object
+      const items = order.items.map((item: any) => ({
+        ...item,
+        menuItem: typeof item.menuItem === 'string' ? item.menuItem : item.menuItem._id,
+        _id: item._id
+      }));
+
+      setOrderItems(items);
     } catch (err) {
       setError('Failed to fetch order details');
     } finally {
@@ -141,13 +163,28 @@ const OrderForm: React.FC = () => {
 
     try {
       const orderData = {
-        guestDetails,
+        guestId: guestId || guestDetails._id,
+        guestDetails: {
+          name: guestDetails.name,
+          email: guestDetails.email,
+          phone: guestDetails.phone,
+          address: guestDetails.address
+        },
         collectionPerson: {
           name: collectionPerson.name || guestDetails.name,
           email: collectionPerson.email,
           phone: collectionPerson.phone,
         },
-        items: orderItems,
+        items: orderItems.map(item => ({
+          menuItem: item.menuItem,
+          name: item.name,
+          servingSize: item.servingSize,
+          quantity: item.quantity,
+          price: item.price,
+          totalPrice: item.totalPrice,
+          status: item.status,
+          notes: item.notes
+        })),
         totalAmount: calculateTotal(),
         collectionDate,
         collectionTime,
@@ -179,17 +216,10 @@ const OrderForm: React.FC = () => {
           <h1>{isEditMode ? 'Edit Order' : 'New Order'}</h1>
           <p>
             {isEditMode
-              ? 'Update order details'
+              ? 'Update order details and items'
               : 'Create a new festive takeaway order'}
           </p>
         </div>
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={() => navigate('/dashboard/orders')}
-        >
-          Cancel
-        </button>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -197,71 +227,26 @@ const OrderForm: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-section card">
           <h3>Guest Information</h3>
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="guestName">
-                Guest Name <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                id="guestName"
-                value={guestDetails.name}
-                onChange={(e) =>
-                  setGuestDetails({ ...guestDetails, name: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="guestEmail">
-                Email Address <span className="required">*</span>
-              </label>
-              <input
-                type="email"
-                id="guestEmail"
-                value={guestDetails.email}
-                onChange={(e) =>
-                  setGuestDetails({ ...guestDetails, email: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="guestPhone">
-                Phone Number <span className="required">*</span>
-              </label>
-              <input
-                type="tel"
-                id="guestPhone"
-                value={guestDetails.phone}
-                onChange={(e) =>
-                  setGuestDetails({ ...guestDetails, phone: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="guestAddress">
-                Address <span className="required">*</span>
-              </label>
-              <textarea
-                id="guestAddress"
-                value={guestDetails.address}
-                onChange={(e) =>
-                  setGuestDetails({ ...guestDetails, address: e.target.value })
-                }
-                rows={3}
-                required
-              />
-            </div>
-          </div>
+          <GuestSearch
+            selectedGuest={guestDetails.name ? guestDetails : null}
+            onSelectGuest={(guest) => {
+              setGuestDetails(guest);
+              setGuestId(guest._id);
+            }}
+            onAddNew={() => {
+              setGuestDetails({
+                name: '',
+                email: '',
+                phone: '',
+                address: ''
+              });
+              setGuestId(undefined);
+            }}
+          />
         </div>
 
         <div className="form-section card">
-          <h3>Collection Person (if different)</h3>
+          <h3>Collection Person (if different from guest)</h3>
           <div className="form-grid">
             <div className="form-group">
               <label htmlFor="collectionName">Name</label>
@@ -275,6 +260,7 @@ const OrderForm: React.FC = () => {
                     name: e.target.value,
                   })
                 }
+                placeholder="Leave blank if same as guest"
               />
             </div>
 
@@ -290,6 +276,7 @@ const OrderForm: React.FC = () => {
                     email: e.target.value,
                   })
                 }
+                placeholder="Optional"
               />
             </div>
 
@@ -305,6 +292,7 @@ const OrderForm: React.FC = () => {
                     phone: e.target.value,
                   })
                 }
+                placeholder="Optional"
               />
             </div>
           </div>
@@ -337,7 +325,6 @@ const OrderForm: React.FC = () => {
                 onChange={(e) => setCollectionTime(e.target.value)}
                 required
               />
-              <small>Between 11:00 AM and 9:00 PM</small>
             </div>
 
             <div className="form-group">
@@ -365,131 +352,155 @@ const OrderForm: React.FC = () => {
 
         <div className="form-section card">
           <div className="section-header">
-            <h3>Order Items</h3>
+            <h3>
+              <ShoppingCart size={20} />
+              Order Items
+            </h3>
             <button
               type="button"
-              className="btn-primary"
+              className="btn-primary btn-sm"
               onClick={addItem}
             >
-              + Add Item
+              <Plus size={16} />
+              Add Item
             </button>
           </div>
 
           {orderItems.length === 0 ? (
             <div className="empty-state">
-              <p>No items added yet. Click "Add Item" to get started.</p>
+              <ShoppingCart size={48} className="empty-icon" />
+              <p>No items added yet</p>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={addItem}
+              >
+                <Plus size={18} />
+                Add First Item
+              </button>
             </div>
           ) : (
             <div className="order-items">
-              {orderItems.map((item, index) => (
-                <div key={index} className="order-item-card">
-                  <div className="item-header">
-                    <h4>Item {index + 1}</h4>
-                    <button
-                      type="button"
-                      className="btn-danger btn-sm"
-                      onClick={() => removeItem(index)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-
-                  <div className="form-grid">
-                    <div className="form-group">
-                      <label>
-                        Menu Item <span className="required">*</span>
-                      </label>
-                      <select
-                        value={item.menuItem}
-                        onChange={(e) =>
-                          updateItem(index, 'menuItem', e.target.value)
-                        }
-                        required
+              {orderItems.map((item, index) => {
+                const menuItem = getMenuItemById(item.menuItem);
+                return (
+                  <div key={index} className="item-card">
+                    <div className="item-card-header">
+                      <span className="item-number">#{index + 1}</span>
+                      <button
+                        type="button"
+                        className="btn-icon-danger"
+                        onClick={() => removeItem(index)}
+                        title="Remove item"
                       >
-                        <option value="">Select item...</option>
-                        {menuItems.map((menuItem) => (
-                          <option key={menuItem._id} value={menuItem._id}>
-                            {menuItem.name}
-                          </option>
-                        ))}
-                      </select>
+                        <X size={18} />
+                      </button>
                     </div>
 
-                    {item.menuItem && (
-                      <div className="form-group">
-                        <label>
-                          Serving Size <span className="required">*</span>
-                        </label>
-                        <select
-                          value={item.servingSize}
-                          onChange={(e) =>
-                            updateItem(index, 'servingSize', e.target.value)
-                          }
-                          required
-                        >
-                          <option value="">Select size...</option>
-                          {getMenuItemById(item.menuItem)?.pricing.map(
-                            (pricing) => (
-                              <option
-                                key={pricing.servingSize}
-                                value={pricing.servingSize}
-                              >
-                                {pricing.servingSize} - AED {pricing.price}
+                    <div className="item-card-body">
+                      <div className="form-row">
+                        <div className="form-group flex-2">
+                          <label>
+                            Menu Item <span className="required">*</span>
+                          </label>
+                          <select
+                            value={item.menuItem}
+                            onChange={(e) =>
+                              updateItem(index, 'menuItem', e.target.value)
+                            }
+                            required
+                          >
+                            <option value="">Select an item...</option>
+                            {menuItems.map((mi) => (
+                              <option key={mi._id} value={mi._id}>
+                                {mi.name}
                               </option>
-                            )
-                          )}
-                        </select>
+                            ))}
+                          </select>
+                        </div>
+
+                        {item.menuItem && menuItem && (
+                          <div className="form-group flex-2">
+                            <label>
+                              Serving Size <span className="required">*</span>
+                            </label>
+                            <select
+                              value={item.servingSize}
+                              onChange={(e) =>
+                                updateItem(index, 'servingSize', e.target.value)
+                              }
+                              required
+                            >
+                              <option value="">Select size...</option>
+                              {menuItem.pricing.map((pricing) => (
+                                <option
+                                  key={pricing.servingSize}
+                                  value={pricing.servingSize}
+                                >
+                                  {pricing.servingSize} - AED {pricing.price.toFixed(2)}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        <div className="form-group flex-1">
+                          <label>
+                            Qty <span className="required">*</span>
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              updateItem(
+                                index,
+                                'quantity',
+                                parseInt(e.target.value) || 1
+                              )
+                            }
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group flex-1">
+                          <label>Total</label>
+                          <div className="price-display">
+                            AED {item.totalPrice.toFixed(2)}
+                          </div>
+                        </div>
                       </div>
-                    )}
 
-                    <div className="form-group">
-                      <label>
-                        Quantity <span className="required">*</span>
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(
-                            index,
-                            'quantity',
-                            parseInt(e.target.value) || 1
-                          )
-                        }
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Total Price</label>
-                      <input
-                        type="text"
-                        value={`AED ${item.totalPrice.toFixed(2)}`}
-                        disabled
-                      />
-                    </div>
-
-                    <div className="form-group full-width">
-                      <label>Notes</label>
-                      <textarea
-                        value={item.notes || ''}
-                        onChange={(e) =>
-                          updateItem(index, 'notes', e.target.value)
-                        }
-                        rows={2}
-                        placeholder="Any special instructions..."
-                      />
+                      <div className="form-group">
+                        <label>Special Instructions</label>
+                        <input
+                          type="text"
+                          value={item.notes || ''}
+                          onChange={(e) =>
+                            updateItem(index, 'notes', e.target.value)
+                          }
+                          placeholder="e.g., No salt, extra gravy..."
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
-          <div className="order-total">
-            <h3>Total Amount: AED {calculateTotal().toFixed(2)}</h3>
-          </div>
+          {orderItems.length > 0 && (
+            <div className="order-summary">
+              <div className="summary-row">
+                <span>Subtotal ({orderItems.length} items)</span>
+                <span className="summary-amount">AED {calculateTotal().toFixed(2)}</span>
+              </div>
+              <div className="summary-row total">
+                <span>Total Amount</span>
+                <span className="summary-amount">AED {calculateTotal().toFixed(2)}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="form-actions">
@@ -500,7 +511,11 @@ const OrderForm: React.FC = () => {
           >
             Cancel
           </button>
-          <button type="submit" className="btn-primary" disabled={loading || orderItems.length === 0}>
+          <button
+            type="submit"
+            className="btn-primary"
+            disabled={loading || orderItems.length === 0 || !guestDetails.name}
+          >
             {loading
               ? 'Saving...'
               : isEditMode

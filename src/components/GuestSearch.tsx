@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Plus, User } from 'lucide-react';
-import type { GuestDetails } from '../types';
+import { Search, Plus, User, Star } from 'lucide-react';
+import type { GuestDetails, GuestSearchResult } from '../types';
 import api from '../services/api';
 import './GuestSearch.css';
 
 interface GuestSearchProps {
-  selectedGuest: GuestDetails | null;
-  onSelectGuest: (guest: GuestDetails) => void;
+  selectedGuest: GuestDetails & { _id?: string } | null;
+  onSelectGuest: (guest: GuestDetails & { _id?: string }) => void;
   onAddNew: () => void;
 }
 
@@ -16,7 +16,7 @@ const GuestSearch: React.FC<GuestSearchProps> = ({
   onAddNew,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [guests, setGuests] = useState<GuestDetails[]>([]);
+  const [guests, setGuests] = useState<GuestSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchTimeoutRef = useRef<number | null>(null);
@@ -57,7 +57,7 @@ const GuestSearch: React.FC<GuestSearchProps> = ({
       searchTimeoutRef.current = setTimeout(async () => {
         try {
           const response = (await api.searchGuests(searchQuery)) as {
-            guests: GuestDetails[];
+            guests: GuestSearchResult[];
           };
           setGuests(response.guests || []);
           setShowDropdown(true);
@@ -74,8 +74,14 @@ const GuestSearch: React.FC<GuestSearchProps> = ({
     }
   }, [searchQuery]);
 
-  const handleSelectGuest = (guest: GuestDetails) => {
-    onSelectGuest(guest);
+  const handleSelectGuest = (guest: GuestSearchResult) => {
+    onSelectGuest({
+      _id: guest._id,
+      name: guest.name,
+      email: guest.email,
+      phone: guest.phone,
+      address: guest.address
+    });
     setSearchQuery('');
     setShowDropdown(false);
   };
@@ -155,7 +161,7 @@ const GuestSearch: React.FC<GuestSearchProps> = ({
               ) : guests.length > 0 ? (
                 guests.map((guest, index) => (
                   <button
-                    key={index}
+                    key={guest._id || index}
                     type="button"
                     className="dropdown-item"
                     onClick={() => handleSelectGuest(guest)}
@@ -164,10 +170,20 @@ const GuestSearch: React.FC<GuestSearchProps> = ({
                       <User size={18} />
                     </div>
                     <div className="guest-details">
-                      <div className="guest-name">{guest.name}</div>
+                      <div className="guest-name">
+                        {guest.name}
+                        {guest.hasProfile && (
+                          <Star size={14} className="profile-badge" fill="#fbbf24" color="#fbbf24" />
+                        )}
+                      </div>
                       <div className="guest-contact">
                         {guest.phone} • {guest.email}
                       </div>
+                      {guest.totalOrders !== undefined && guest.totalOrders > 0 && (
+                        <div className="guest-stats">
+                          {guest.totalOrders} orders • AED {guest.totalSpent?.toFixed(2)}
+                        </div>
+                      )}
                     </div>
                   </button>
                 ))

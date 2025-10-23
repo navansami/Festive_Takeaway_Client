@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { UserRole } from '../types';
-import { LayoutDashboard, ShoppingBag, UtensilsCrossed, Users, TrendingUp, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, UtensilsCrossed, Users, TrendingUp, LogOut, UserCircle } from 'lucide-react';
 import './DashboardLayout.css';
 
 const DashboardLayout: React.FC = () => {
@@ -31,6 +31,11 @@ const DashboardLayout: React.FC = () => {
           <NavLink to="/dashboard/orders" className="nav-link">
             <ShoppingBag className="nav-icon" size={20} />
             <span>Orders</span>
+          </NavLink>
+
+          <NavLink to="/dashboard/guests" className="nav-link">
+            <UserCircle className="nav-icon" size={20} />
+            <span>Guests</span>
           </NavLink>
 
           {user?.role === UserRole.ADMIN && (

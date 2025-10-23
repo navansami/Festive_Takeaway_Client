@@ -118,6 +118,49 @@ class ApiService {
     return this.request(`/orders/search/guests?query=${encodeURIComponent(query)}`);
   }
 
+  // Guest Profile endpoints
+  async getGuests(params?: Record<string, string>) {
+    const queryString = params
+      ? '?' + new URLSearchParams(params).toString()
+      : '';
+    return this.request(`/guests${queryString}`);
+  }
+
+  async getGuestById(id: string) {
+    return this.request(`/guests/${id}`);
+  }
+
+  async getGuestOrders(id: string, params?: Record<string, string>) {
+    const queryString = params
+      ? '?' + new URLSearchParams(params).toString()
+      : '';
+    return this.request(`/guests/${id}/orders${queryString}`);
+  }
+
+  async createGuest(data: any) {
+    return this.request('/guests', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateGuest(id: string, data: any) {
+    return this.request(`/guests/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteGuest(id: string) {
+    return this.request(`/guests/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async searchGuestProfiles(query: string) {
+    return this.request(`/guests/search?q=${encodeURIComponent(query)}`);
+  }
+
   // Menu Item endpoints
   async getMenuItems() {
     return this.request('/menu-items');
@@ -148,6 +191,10 @@ class ApiService {
   }
 
   // Analytics endpoints
+  async getDashboardStats() {
+    return this.request('/analytics/dashboard');
+  }
+
   async getAnalytics(startDate: string, endDate: string) {
     return this.request(
       `/analytics?startDate=${startDate}&endDate=${endDate}`

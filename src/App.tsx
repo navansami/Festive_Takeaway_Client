@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import OrderForm from './pages/OrderForm';
 import OrderDetail from './pages/OrderDetail';
+import Guests from './pages/Guests';
+import GuestDetail from './pages/GuestDetail';
 import MenuItems from './pages/MenuItems';
 import Users from './pages/Users';
 import Analytics from './pages/Analytics';
@@ -30,6 +32,8 @@ function App() {
             <Route path="orders/new" element={<OrderForm />} />
             <Route path="orders/:id" element={<OrderDetail />} />
             <Route path="orders/:id/edit" element={<OrderForm />} />
+            <Route path="guests" element={<Guests />} />
+            <Route path="guests/:id" element={<GuestDetail />} />
             <Route path="menu-items" element={<MenuItems />} />
             <Route path="users" element={<Users />} />
             <Route path="analytics" element={<Analytics />} />
