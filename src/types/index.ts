@@ -62,6 +62,17 @@ export interface User {
   updatedAt: string;
 }
 
+export interface BundleConfig {
+  servingSize: string;
+  maxPortions: number;
+  maxSauces: number;
+  allowMixing: boolean;
+  portionValues?: {
+    servingSize: string;
+    portionValue: number;
+  }[];
+}
+
 export interface MenuItem {
   _id: string;
   name: string;
@@ -73,6 +84,7 @@ export interface MenuItem {
   }[];
   allergens?: string[];
   isAvailable: boolean;
+  bundleConfig?: BundleConfig[];
   createdAt: string;
   updatedAt: string;
 }

@@ -123,6 +123,93 @@
   margin-top: var(--spacing-md);
 }
 
+.bundle-config-section {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.bundle-config-section h4 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 1rem;
+  color: var(--color-black);
+}
+
+.section-description {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.bundle-config-item {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: var(--color-background-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.bundle-config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.bundle-config-header h5 {
+  margin: 0;
+  font-size: 0.938rem;
+  color: var(--color-black);
+}
+
+.bundle-config-form {
+  margin-top: var(--spacing-md);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.portion-values-section {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.section-header-small {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.section-header-small label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-black);
+}
+
+.portion-value-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.help-text {
+  margin: var(--spacing-md) 0 0 0;
+  padding: var(--spacing-md);
+  background-color: var(--color-info-light);
+  border-left: 3px solid var(--color-info);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  color: var(--color-info-dark);
+}
+
 @media (max-width: 768px) {
   .menu-item-header {
     flex-direction: column;
@@ -139,5 +226,23 @@
 
   .pricing-row {
     grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .portion-value-row {
+    grid-template-columns: 1fr;
+  }
+
+  .bundle-config-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .bundle-config-header button {
+    width: 100%;
   }
 }

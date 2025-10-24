@@ -31,6 +31,16 @@ const MenuItems: React.FC = () => {
     { servingSize: string; price: number }[]
   >([{ servingSize: '', price: 0 }]);
 
+  const [bundleConfigs, setBundleConfigs] = useState<
+    {
+      servingSize: string;
+      maxPortions: number;
+      maxSauces: number;
+      allowMixing: boolean;
+      portionValues: { servingSize: string; portionValue: number }[];
+    }[]
+  >([]);
+
   useEffect(() => {
     fetchMenuItems();
   }, []);
@@ -58,6 +68,7 @@ const MenuItems: React.FC = () => {
         isAvailable: item.isAvailable,
       });
       setPricingItems(item.pricing);
+      setBundleConfigs(item.bundleConfig || []);
     } else {
       setEditingItem(null);
       setFormData({
@@ -68,6 +79,7 @@ const MenuItems: React.FC = () => {
         isAvailable: true,
       });
       setPricingItems([{ servingSize: '', price: 0 }]);
+      setBundleConfigs([]);
     }
     setShowModal(true);
   };
@@ -95,6 +107,81 @@ const MenuItems: React.FC = () => {
     setPricingItems(newPricing);
   };
 
+  const addBundleConfig = (servingSize: string) => {
+    setBundleConfigs([
+      ...bundleConfigs,
+      {
+        servingSize,
+        maxPortions: 0,
+        maxSauces: 0,
+        allowMixing: false,
+        portionValues: [],
+      },
+    ]);
+  };
+
+  const removeBundleConfig = (servingSize: string) => {
+    setBundleConfigs(bundleConfigs.filter((bc) => bc.servingSize !== servingSize));
+  };
+
+  const updateBundleConfig = (
+    servingSize: string,
+    field: string,
+    value: number | boolean
+  ) => {
+    setBundleConfigs(
+      bundleConfigs.map((bc) =>
+        bc.servingSize === servingSize ? { ...bc, [field]: value } : bc
+      )
+    );
+  };
+
+  const addPortionValue = (bundleServingSize: string) => {
+    setBundleConfigs(
+      bundleConfigs.map((bc) =>
+        bc.servingSize === bundleServingSize
+          ? {
+              ...bc,
+              portionValues: [...bc.portionValues, { servingSize: '', portionValue: 0 }],
+            }
+          : bc
+      )
+    );
+  };
+
+  const removePortionValue = (bundleServingSize: string, index: number) => {
+    setBundleConfigs(
+      bundleConfigs.map((bc) =>
+        bc.servingSize === bundleServingSize
+          ? {
+              ...bc,
+              portionValues: bc.portionValues.filter((_, i) => i !== index),
+            }
+          : bc
+      )
+    );
+  };
+
+  const updatePortionValue = (
+    bundleServingSize: string,
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
+    setBundleConfigs(
+      bundleConfigs.map((bc) =>
+        bc.servingSize === bundleServingSize
+          ? {
+              ...bc,
+              portionValues: bc.portionValues.map((pv, i) =>
+                i === index ? { ...pv, [field]: value } : pv
+              ),
+            }
+          : bc
+      )
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -108,6 +195,7 @@ const MenuItems: React.FC = () => {
         ...formData,
         allergens,
         pricing: pricingItems,
+        bundleConfig: bundleConfigs.length > 0 ? bundleConfigs : undefined,
       };
 
       if (editingItem) {
@@ -372,6 +460,173 @@ const MenuItems: React.FC = () => {
                     </div>
                   ))}
                 </div>
+
+                {/* Bundle Configuration Section */}
+                {formData.category === MenuCategory.ROASTS && (
+                  <div className="bundle-config-section">
+                    <div className="section-header">
+                      <h4>Bundle Configuration (Optional)</h4>
+                      <p className="section-description">
+                        Configure bundle options for items that include sides and sauces
+                      </p>
+                    </div>
+
+                    {pricingItems.map((pricing, index) => {
+                      const hasBundle = bundleConfigs.some(
+                        (bc) => bc.servingSize === pricing.servingSize
+                      );
+                      const bundleConfig = bundleConfigs.find(
+                        (bc) => bc.servingSize === pricing.servingSize
+                      );
+
+                      return (
+                        <div key={index} className="bundle-config-item">
+                          <div className="bundle-config-header">
+                            <h5>{pricing.servingSize || 'Pricing Option ' + (index + 1)}</h5>
+                            {!hasBundle ? (
+                              <button
+                                type="button"
+                                className="btn-primary btn-sm"
+                                onClick={() => addBundleConfig(pricing.servingSize)}
+                                disabled={!pricing.servingSize}
+                              >
+                                + Add Bundle Config
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                className="btn-danger btn-sm"
+                                onClick={() => removeBundleConfig(pricing.servingSize)}
+                              >
+                                Remove Bundle
+                              </button>
+                            )}
+                          </div>
+
+                          {hasBundle && bundleConfig && (
+                            <div className="bundle-config-form">
+                              <div className="form-row">
+                                <div className="form-group">
+                                  <label>Max Portions for Sides</label>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={bundleConfig.maxPortions}
+                                    onChange={(e) =>
+                                      updateBundleConfig(
+                                        pricing.servingSize,
+                                        'maxPortions',
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
+                                    placeholder="e.g., 2 or 4"
+                                  />
+                                </div>
+
+                                <div className="form-group">
+                                  <label>Max Sauces</label>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={bundleConfig.maxSauces}
+                                    onChange={(e) =>
+                                      updateBundleConfig(
+                                        pricing.servingSize,
+                                        'maxSauces',
+                                        parseInt(e.target.value) || 0
+                                      )
+                                    }
+                                    placeholder="e.g., 1"
+                                  />
+                                </div>
+
+                                <div className="form-group">
+                                  <label>
+                                    <input
+                                      type="checkbox"
+                                      checked={bundleConfig.allowMixing}
+                                      onChange={(e) =>
+                                        updateBundleConfig(
+                                          pricing.servingSize,
+                                          'allowMixing',
+                                          e.target.checked
+                                        )
+                                      }
+                                      style={{ width: 'auto', marginRight: '8px' }}
+                                    />
+                                    Allow mixing different serving sizes
+                                  </label>
+                                </div>
+                              </div>
+
+                              <div className="portion-values-section">
+                                <div className="section-header-small">
+                                  <label>Portion Values for Different Serving Sizes</label>
+                                  <button
+                                    type="button"
+                                    className="btn-primary btn-sm"
+                                    onClick={() => addPortionValue(pricing.servingSize)}
+                                  >
+                                    + Add Portion Value
+                                  </button>
+                                </div>
+
+                                {bundleConfig.portionValues.map((pv, pvIndex) => (
+                                  <div key={pvIndex} className="portion-value-row">
+                                    <input
+                                      type="text"
+                                      placeholder="Serving size (e.g., For 4 people)"
+                                      value={pv.servingSize}
+                                      onChange={(e) =>
+                                        updatePortionValue(
+                                          pricing.servingSize,
+                                          pvIndex,
+                                          'servingSize',
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      step="0.5"
+                                      placeholder="Portion value (e.g., 1 or 2)"
+                                      value={pv.portionValue}
+                                      onChange={(e) =>
+                                        updatePortionValue(
+                                          pricing.servingSize,
+                                          pvIndex,
+                                          'portionValue',
+                                          parseFloat(e.target.value) || 0
+                                        )
+                                      }
+                                    />
+                                    <button
+                                      type="button"
+                                      className="btn-danger btn-sm"
+                                      onClick={() =>
+                                        removePortionValue(pricing.servingSize, pvIndex)
+                                      }
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                ))}
+                                {bundleConfig.portionValues.length === 0 && (
+                                  <p className="help-text">
+                                    Add portion values to define how different serving sizes
+                                    count as portions (e.g., "For 4 people" = 1 portion,
+                                    "For 8 people" = 2 portions)
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               <div className="modal-footer">
                 <button

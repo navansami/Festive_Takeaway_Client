@@ -15,7 +15,7 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
   selectedItems,
   onItemsChange,
 }) => {
-  // Check if Turkey with Sides is selected and which size
+  // Check if an item with bundle config is selected
   const getTurkeyWithSidesBundle = () => {
     const turkeyItem = selectedItems.find(
       item => item.name.toLowerCase().includes('turkey') &&
@@ -23,23 +23,49 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
     );
     if (!turkeyItem) return null;
 
-    // Determine bundle size based on serving size
-    const servingLower = turkeyItem.servingSize.toLowerCase();
-    if (servingLower.includes('4')) {
-      // AED 650: Choose either 2 sides for 4ppl OR 1 side for 8ppl + 1 sauce
-      return { size: 4, maxPortions: 2, maxSauces: 1, price: 650, noMixing: true };
-    } else if (servingLower.includes('8')) {
-      // AED 850: 4 portions of sides (can be mixed) + 1 sauce
-      // Examples: 2x8ppl OR 2x4ppl+1x8ppl OR 4x4ppl
-      return { size: 8, maxPortions: 4, maxSauces: 1, price: 850, noMixing: false };
+    // Find the menu item to get bundle config
+    const menuItem = menuItems.find(m => m._id === turkeyItem.menuItem);
+    if (!menuItem || !menuItem.bundleConfig || menuItem.bundleConfig.length === 0) {
+      // Fallback to hardcoded logic if no bundle config exists
+      const turkeyPrice = turkeyItem.price;
+      if (turkeyPrice === 650) {
+        return { size: 4, maxPortions: 2, maxSauces: 1, price: 650, noMixing: true };
+      } else if (turkeyPrice === 850) {
+        return { size: 8, maxPortions: 4, maxSauces: 1, price: 850, noMixing: false };
+      }
+      return null;
     }
-    return null;
+
+    // Find matching bundle config for this serving size
+    const bundleConfig = menuItem.bundleConfig.find(
+      config => config.servingSize === turkeyItem.servingSize
+    );
+
+    if (!bundleConfig) return null;
+
+    return {
+      size: bundleConfig.allowMixing ? 8 : 4,
+      maxPortions: bundleConfig.maxPortions,
+      maxSauces: bundleConfig.maxSauces,
+      price: turkeyItem.price,
+      noMixing: !bundleConfig.allowMixing,
+      portionValues: bundleConfig.portionValues
+    };
   };
 
   const turkeyBundle = getTurkeyWithSidesBundle();
 
   // Calculate portions based on serving size
   const getPortionsForServingSize = (servingSize: string): number => {
+    // First check if bundle has custom portion values
+    if (turkeyBundle?.portionValues) {
+      const portionConfig = turkeyBundle.portionValues.find(
+        pv => pv.servingSize === servingSize
+      );
+      if (portionConfig) return portionConfig.portionValue;
+    }
+
+    // Fallback to default logic
     const servingLower = servingSize.toLowerCase();
     if (servingLower.includes('8')) return 2; // 8 people = 2 portions
     if (servingLower.includes('4')) return 1; // 4 people = 1 portion
