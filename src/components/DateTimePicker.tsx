@@ -144,7 +144,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="datetime-picker">
+    <div className={`datetime-picker ${showCalendar ? 'calendar-open' : ''}`}>
       <div className="datetime-row">
         {/* Date Picker */}
         <div className="datetime-field">

@@ -1,5 +1,10 @@
 .datetime-picker {
   width: 100%;
+  transition: padding-bottom 0.2s ease;
+}
+
+.datetime-picker.calendar-open {
+  padding-bottom: 18rem;
 }
 
 .datetime-row {
@@ -55,7 +60,7 @@
 }
 
 .date-input span {
-  flex: 1;
+  flex: 8;
   color: #1a1a1a;
 }
 
@@ -68,16 +73,16 @@
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  padding: 1rem;
-  min-width: 300px;
+  z-index: 1000;
+  padding: 0.75rem;
+  width: 160%;
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .calendar-nav {
@@ -99,7 +104,7 @@
 }
 
 .calendar-month {
-  font-size: 1rem;
+  font-size: 0.938rem;
   font-weight: 600;
   color: #1a1a1a;
 }
@@ -107,15 +112,15 @@
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 2px;
 }
 
 .calendar-day-name {
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.688rem;
   font-weight: 600;
   color: #666;
-  padding: 0.5rem 0;
+  padding: 0.375rem 0;
 }
 
 .calendar-day {
@@ -125,11 +130,12 @@
   justify-content: center;
   border: none;
   background: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  border-radius: 4px;
+  font-size: 0.813rem;
   cursor: pointer;
   transition: all 0.2s ease;
   color: #1a1a1a;
+  padding: 0.25rem;
 }
 
 .calendar-day:hover:not(.disabled) {
@@ -203,6 +209,8 @@
   }
 
   .calendar-dropdown {
-    min-width: 280px;
+    left: 0;
+    right: 0;
+    padding: 0.5rem;
   }
 }
