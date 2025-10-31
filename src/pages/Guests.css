@@ -472,3 +472,42 @@ table td:nth-child(6) {
     height: 14px;
   }
 }
+
+/* CRITICAL FIX - Force action buttons to stay in place */
+table {
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+/* Actions Column - Force constraints */
+table th:nth-child(6),
+table td:nth-child(6) {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  text-align: center !important;
+  padding: 12px 8px !important;
+  overflow: visible !important;
+}
+
+/* Action Buttons - Force flex layout */
+.action-buttons {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove any absolute positioning from buttons */
+.action-buttons button,
+.action-buttons .btn-icon {
+  position: relative !important;
+  display: inline-flex !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
