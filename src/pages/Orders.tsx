@@ -23,6 +23,7 @@ const Orders: React.FC = () => {
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [copied, setCopied] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -126,6 +127,12 @@ const Orders: React.FC = () => {
   };
 
   const handleRowHover = (orderId: string, event: React.MouseEvent<HTMLTableRowElement>) => {
+    // Clear any pending hide timeout
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const tooltipWidth = 350; // Width of tooltip
@@ -148,6 +155,25 @@ const Orders: React.FC = () => {
       y: rect.top
     });
     setHoveredOrder(orderId);
+  };
+
+  const handleRowLeave = () => {
+    // Delay hiding to allow mouse to move to tooltip
+    hideTimeoutRef.current = setTimeout(() => {
+      setHoveredOrder(null);
+    }, 100);
+  };
+
+  const handleTooltipEnter = () => {
+    // Cancel hide timeout when mouse enters tooltip
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+  };
+
+  const handleTooltipLeave = () => {
+    setHoveredOrder(null);
   };
 
   const handleDelete = async (order: Order) => {
@@ -290,9 +316,15 @@ const Orders: React.FC = () => {
                   <tr
                     key={order._id}
                     onMouseEnter={(e) => handleRowHover(order._id, e)}
-                    onMouseLeave={() => setHoveredOrder(null)}
+                    onMouseLeave={handleRowLeave}
                   >
-                    <td className="order-number">{order.orderNumber}</td>
+                    <td
+                      className="order-number clickable"
+                      onClick={() => handleCopyToClipboard(order)}
+                      title="Click to copy order details"
+                    >
+                      {order.orderNumber}
+                    </td>
                     <td>
                       <div className="customer-info">
                         <strong>{order.guestDetails.name}</strong>
@@ -357,6 +389,8 @@ const Orders: React.FC = () => {
             top: `${tooltipPosition.y}px`,
             zIndex: 1000,
           }}
+          onMouseEnter={handleTooltipEnter}
+          onMouseLeave={handleTooltipLeave}
         >
           {(() => {
             const order = orders.find(o => o._id === hoveredOrder);
@@ -366,13 +400,11 @@ const Orders: React.FC = () => {
               <>
                 <div className="tooltip-header">
                   <h4>Order {order.orderNumber}</h4>
-                  <button
-                    className="btn-copy"
-                    onClick={() => handleCopyToClipboard(order)}
-                    title="Copy to clipboard"
-                  >
-                    {copied ? <Check size={16} /> : <Copy size={16} />}
-                  </button>
+                  {copied && (
+                    <span className="copied-indicator">
+                      <Check size={14} /> Copied
+                    </span>
+                  )}
                 </div>
                 <div className="tooltip-content">
                   <div className="tooltip-section">
