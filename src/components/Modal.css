@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 0;
   overflow-y: auto;
 }
 
@@ -17,7 +17,7 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-height: 90vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -63,14 +63,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid #e5e7eb;
   flex-shrink: 0;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
   color: #111827;
 }
@@ -94,7 +94,7 @@
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 16px 20px;
   overflow-y: auto;
   flex: 1;
 }
