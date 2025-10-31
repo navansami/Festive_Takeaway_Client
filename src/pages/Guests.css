@@ -74,6 +74,7 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 thead {
@@ -81,29 +82,57 @@ thead {
 }
 
 th {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
   font-size: 0.875rem;
   color: #374151;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
-th:last-child {
-  width: 160px;
-  min-width: 160px;
+/* Column widths */
+th:nth-child(1) { /* Name */
+  width: 18%;
+}
+
+th:nth-child(2) { /* Contact */
+  width: 25%;
+}
+
+th:nth-child(3) { /* Total Orders */
+  width: 12%;
+  text-align: center;
+}
+
+th:nth-child(4) { /* Total Spent */
+  width: 13%;
+}
+
+th:nth-child(5) { /* Last Order */
+  width: 13%;
+}
+
+th:nth-child(6) { /* Actions */
+  width: 19%;
+  text-align: center;
 }
 
 td {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   border-top: 1px solid #f3f4f6;
   font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-td:last-child {
-  width: 160px;
-  min-width: 160px;
+td:nth-child(3) { /* Total Orders - center align */
+  text-align: center;
+}
+
+td:nth-child(6) { /* Actions - center align */
+  text-align: center;
 }
 
 tr:hover {
@@ -119,6 +148,9 @@ tr:hover {
 .guest-name strong {
   font-weight: 600;
   color: #1a1a1a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dietary-badge {
@@ -135,6 +167,12 @@ tr:hover {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.contact-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .contact-info span:first-child {
@@ -171,8 +209,9 @@ tr:hover {
 .action-buttons {
   display: flex;
   gap: 0.5rem;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: nowrap;
+  align-items: center;
 }
 
 .btn-icon {
@@ -186,8 +225,10 @@ tr:hover {
   color: #6b7280;
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 36px;
-  height: 36px;
+  min-width: 32px;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
 }
 
 .btn-icon:hover:not(:disabled) {
