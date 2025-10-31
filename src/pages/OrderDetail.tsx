@@ -83,13 +83,25 @@ const OrderDetail: React.FC = () => {
   };
 
   const handlePaymentAdd = async () => {
-    if (!id) return;
+    if (!id || !order) return;
     try {
+      const paymentAmountNum = parseFloat(paymentAmount);
+
       await api.addPayment(id, {
-        amount: parseFloat(paymentAmount),
+        amount: paymentAmountNum,
         method: paymentMethod,
         notes: paymentNotes,
       });
+
+      // Check if payment is now complete and order is pending
+      const newTotalPaid = order.totalPaid + paymentAmountNum;
+      const isPaidInFull = newTotalPaid >= order.totalAmount;
+
+      // Auto-confirm order if paid in full and currently pending
+      if (isPaidInFull && order.status === OrderStatus.PENDING) {
+        await api.updateOrderStatus(id, OrderStatus.CONFIRMED, 'Order automatically confirmed - payment received in full');
+      }
+
       setShowPaymentModal(false);
       setPaymentAmount('');
       setPaymentNotes('');
@@ -473,6 +485,8 @@ const OrderDetail: React.FC = () => {
                 >
                   <option value={PaymentMethod.CARD}>Card</option>
                   <option value={PaymentMethod.CASH}>Cash</option>
+                  <option value={PaymentMethod.SERVME}>Servme</option>
+                  <option value={PaymentMethod.SECUREPAY}>Securepay</option>
                   <option value={PaymentMethod.BANK_TRANSFER}>
                     Bank Transfer
                   </option>
