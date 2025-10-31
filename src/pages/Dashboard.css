@@ -226,6 +226,12 @@
 .chart-container {
   width: 100%;
   min-height: 240px;
+  overflow: visible;
+  position: relative;
+}
+
+.chart-card.full-width .chart-container {
+  min-height: 300px;
 }
 
 /* Bottom Row */
@@ -558,9 +564,17 @@
     padding: var(--spacing-md);
   }
 
+  .chart-card.full-width .chart-container {
+    min-height: 350px;
+  }
+
   .upcoming-collections-card,
   .quick-stats-card {
     padding: var(--spacing-md);
+  }
+
+  .recharts-cartesian-axis-tick-value {
+    font-size: 9px !important;
   }
 }
 
@@ -581,4 +595,22 @@
 
 .recharts-legend-item {
   margin: 0 !important;
+}
+
+/* Chart text labels */
+.recharts-cartesian-axis-tick-value {
+  font-size: 11px !important;
+}
+
+/* Ensure chart labels don't overflow */
+.recharts-wrapper {
+  overflow: visible !important;
+}
+
+.recharts-xAxis .recharts-cartesian-axis-tick {
+  overflow: visible !important;
+}
+
+.recharts-yAxis .recharts-cartesian-axis-tick {
+  overflow: visible !important;
 }

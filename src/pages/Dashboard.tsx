@@ -346,26 +346,28 @@ const Dashboard: React.FC = () => {
           <p>Most popular menu items by quantity sold</p>
         </div>
         <div className="chart-container">
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={stats.topItems.slice(0, 8)}>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={stats.topItems.slice(0, 8)}
+              margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis
                 dataKey="name"
                 stroke="#6b7280"
-                style={{ fontSize: '12px' }}
+                style={{ fontSize: '11px' }}
                 angle={-45}
                 textAnchor="end"
-                height={100}
+                height={80}
+                interval={0}
               />
               <YAxis
                 stroke="#6b7280"
                 style={{ fontSize: '12px' }}
+                label={{ value: 'Quantity', angle: -90, position: 'insideLeft' }}
               />
               <Tooltip
-                formatter={(value: any, name: string) => {
-                  if (name === 'quantity') return [value, 'Quantity Sold'];
-                  return [formatCurrency(value), 'Revenue'];
-                }}
+                formatter={(value: any) => [value, 'Quantity Sold']}
                 contentStyle={{
                   backgroundColor: 'white',
                   border: '1px solid #e5e7eb',
