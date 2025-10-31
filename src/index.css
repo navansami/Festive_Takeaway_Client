@@ -467,8 +467,16 @@ tr:hover {
   border-collapse: collapse;
 }
 
-.orders-table th:nth-child(7),
-.orders-table td:nth-child(7) {
+table th:nth-child(7),
+table td:nth-child(7) {
   width: 10%;
+  min-width: 100px;
+  text-align: center;
+}
+
+table th:nth-child(8),
+table td:nth-child(8) {
+  width: 8%;
+  min-width: 80px;
   text-align: center;
 }
