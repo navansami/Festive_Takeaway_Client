@@ -91,7 +91,7 @@ const GuestDetail: React.FC = () => {
     return (
       <div className="error-container">
         <p>{error || 'Guest not found'}</p>
-        <button className="btn-primary" onClick={() => navigate('/guests')}>
+        <button className="btn-primary" onClick={() => navigate('/dashboard/guests')}>
           Back to Guests
         </button>
       </div>
@@ -101,7 +101,7 @@ const GuestDetail: React.FC = () => {
   return (
     <div className="guest-detail-page">
       <div className="page-header">
-        <button className="back-button" onClick={() => navigate('/guests')}>
+        <button className="back-button" onClick={() => navigate('/dashboard/guests')}>
           <ArrowLeft size={20} />
           <span>Back to Guests</span>
         </button>
@@ -245,7 +245,7 @@ const GuestDetail: React.FC = () => {
                     <td>
                       <button
                         className="btn-link"
-                        onClick={() => navigate(`/orders/${order._id}`)}
+                        onClick={() => navigate(`/dashboard/orders/${order._id}`)}
                       >
                         View
                       </button>

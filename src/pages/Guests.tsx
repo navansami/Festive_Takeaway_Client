@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Guest, PaginationInfo } from '../types';
 import api from '../services/api';
-import { Plus, Search, Eye, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Search, Eye, Users, ChevronLeft, ChevronRight, Edit2, Trash2 } from 'lucide-react';
 import GuestFormModal from '../components/GuestFormModal';
+import { useAuth } from '../contexts/AuthContext';
+import { UserRole } from '../types';
 import './Guests.css';
 
 interface GuestsResponse {
@@ -26,8 +28,10 @@ const Guests: React.FC = () => {
     hasPrevPage: false
   });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchGuests(pagination.page);
@@ -76,6 +80,30 @@ const Guests: React.FC = () => {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const handleEdit = (guest: Guest) => {
+    setEditingGuest(guest);
+  };
+
+  const handleDelete = async (guest: Guest) => {
+    const confirmMessage = `Are you sure you want to delete ${guest.name}?\n\nEmail: ${guest.email}\nTotal Orders: ${guest.totalOrders}\nTotal Spent: AED ${guest.totalSpent.toFixed(2)}\n\nThis action cannot be undone.`;
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      await api.deleteGuest(guest._id);
+      setGuests(guests.filter(g => g._id !== guest._id));
+      // Update pagination total
+      setPagination(prev => ({
+        ...prev,
+        total: prev.total - 1
+      }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete guest');
+    }
   };
 
   if (loading) {
@@ -174,11 +202,25 @@ const Guests: React.FC = () => {
                       <td>
                         <div className="action-buttons">
                           <button
-                            className="btn-icon"
-                            onClick={() => navigate(`/guests/${guest._id}`)}
+                            className="btn-icon btn-icon-primary"
+                            onClick={() => navigate(`/dashboard/guests/${guest._id}`)}
                             title="View Details"
                           >
-                            <Eye size={18} />
+                            <Eye size={16} />
+                          </button>
+                          <button
+                            className="btn-icon btn-icon-secondary"
+                            onClick={() => handleEdit(guest)}
+                            title="Edit Guest"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            className="btn-icon btn-icon-danger"
+                            onClick={() => handleDelete(guest)}
+                            title="Delete Guest"
+                          >
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </td>
@@ -222,13 +264,17 @@ const Guests: React.FC = () => {
       </div>
 
       <GuestFormModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
+        isOpen={isCreateModalOpen || editingGuest !== null}
+        onClose={() => {
+          setIsCreateModalOpen(false);
+          setEditingGuest(null);
+        }}
         onSuccess={() => {
           setIsCreateModalOpen(false);
+          setEditingGuest(null);
           fetchGuests(pagination.page);
         }}
-        guest={null}
+        guest={editingGuest}
       />
     </div>
   );

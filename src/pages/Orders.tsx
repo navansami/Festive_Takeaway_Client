@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Order } from '../types';
 import { OrderStatus, PaymentStatus, UserRole } from '../types';
 import api from '../services/api';
-import { Plus, Search, Eye, ShoppingBag, Calendar, X, Trash2, Copy, Check } from 'lucide-react';
+import { Plus, Search, Eye, ShoppingBag, Calendar, X, Trash2, Check } from 'lucide-react';
 import OrderModal from '../components/OrderModal';
 import { useAuth } from '../contexts/AuthContext';
 import './Orders.css';
@@ -23,7 +23,7 @@ const Orders: React.FC = () => {
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [copied, setCopied] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hideTimeoutRef = useRef<number | null>(null);
 
   const navigate = useNavigate();
   const { user } = useAuth();
