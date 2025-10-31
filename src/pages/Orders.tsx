@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Order } from '../types';
-import { OrderStatus, PaymentStatus } from '../types';
+import { OrderStatus, PaymentStatus, UserRole } from '../types';
 import api from '../services/api';
-import { Plus, Search, Eye, ShoppingBag, Calendar, X } from 'lucide-react';
+import { Plus, Search, Eye, ShoppingBag, Calendar, X, Trash2 } from 'lucide-react';
 import OrderModal from '../components/OrderModal';
+import { useAuth } from '../contexts/AuthContext';
 import './Orders.css';
 
 const Orders: React.FC = () => {
@@ -20,6 +21,7 @@ const Orders: React.FC = () => {
   });
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchOrders();
@@ -87,6 +89,21 @@ const Orders: React.FC = () => {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const handleDelete = async (order: Order) => {
+    if (!window.confirm(
+      `Are you sure you want to delete order ${order.orderNumber}?\n\nCustomer: ${order.guestDetails.name}\nTotal: AED ${order.totalAmount.toFixed(2)}\n\nThis action cannot be undone.`
+    )) {
+      return;
+    }
+
+    try {
+      await api.deleteOrder(order._id);
+      setOrders(orders.filter(o => o._id !== order._id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete order');
+    }
   };
 
   if (loading) {
@@ -239,13 +256,24 @@ const Orders: React.FC = () => {
                       </span>
                     </td>
                     <td>
-                      <button
-                        className="btn-secondary btn-sm"
-                        onClick={() => navigate(`/dashboard/orders/${order._id}`)}
-                      >
-                        <Eye size={16} />
-                        <span>View</span>
-                      </button>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                          className="btn-secondary btn-sm"
+                          onClick={() => navigate(`/dashboard/orders/${order._id}`)}
+                        >
+                          <Eye size={16} />
+                          <span>View</span>
+                        </button>
+                        {user?.role === UserRole.ADMIN && (
+                          <button
+                            className="btn-danger btn-sm"
+                            onClick={() => handleDelete(order)}
+                          >
+                            <Trash2 size={16} />
+                            <span>Delete</span>
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

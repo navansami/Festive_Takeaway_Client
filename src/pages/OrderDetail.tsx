@@ -5,13 +5,16 @@ import {
   OrderStatus,
   PaymentStatus,
   PaymentMethod,
+  UserRole,
 } from '../types';
 import api from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import './OrderDetail.css';
 
 const OrderDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,6 +50,23 @@ const OrderDetail: React.FC = () => {
       setError('Failed to fetch order details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!order || !id) return;
+
+    if (!window.confirm(
+      `Are you sure you want to delete order ${order.orderNumber}?\n\nCustomer: ${order.guestDetails.name}\nTotal: AED ${order.totalAmount.toFixed(2)}\n\nThis action cannot be undone.`
+    )) {
+      return;
+    }
+
+    try {
+      await api.deleteOrder(id);
+      navigate('/dashboard/orders');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete order');
     }
   };
 
@@ -164,6 +184,14 @@ const OrderDetail: React.FC = () => {
           >
             Edit Order
           </button>
+          {user?.role === UserRole.ADMIN && (
+            <button
+              className="btn-danger"
+              onClick={handleDelete}
+            >
+              Delete Order
+            </button>
+          )}
         </div>
       </div>
 
