@@ -4,8 +4,6 @@ import type { Guest, PaginationInfo } from '../types';
 import api from '../services/api';
 import { Plus, Search, Eye, Users, ChevronLeft, ChevronRight, Edit2, Trash2 } from 'lucide-react';
 import GuestFormModal from '../components/GuestFormModal';
-import { useAuth } from '../contexts/AuthContext';
-import { UserRole } from '../types';
 import './Guests.css';
 
 interface GuestsResponse {
@@ -31,7 +29,6 @@ const Guests: React.FC = () => {
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
 
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   useEffect(() => {
     fetchGuests(pagination.page);
