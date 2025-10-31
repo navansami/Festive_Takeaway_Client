@@ -127,8 +127,24 @@ const Orders: React.FC = () => {
 
   const handleRowHover = (orderId: string, event: React.MouseEvent<HTMLTableRowElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const tooltipWidth = 350; // Width of tooltip
+
+    // Position tooltip to the left of the order number
+    let xPosition = rect.left - tooltipWidth - 10;
+
+    // If not enough space on the left, position to the right
+    if (xPosition < 10) {
+      xPosition = rect.left + 150; // Position near order number column
+    }
+
+    // If still goes off screen right, adjust
+    if (xPosition + tooltipWidth > viewportWidth - 10) {
+      xPosition = viewportWidth - tooltipWidth - 10;
+    }
+
     setTooltipPosition({
-      x: rect.right + 10,
+      x: Math.max(10, xPosition),
       y: rect.top
     });
     setHoveredOrder(orderId);
