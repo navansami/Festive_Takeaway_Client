@@ -68,7 +68,12 @@ const MenuItems: React.FC = () => {
         isAvailable: item.isAvailable,
       });
       setPricingItems(item.pricing);
-      setBundleConfigs(item.bundleConfig || []);
+      setBundleConfigs(
+        (item.bundleConfig || []).map((bc) => ({
+          ...bc,
+          portionValues: bc.portionValues || [],
+        }))
+      );
     } else {
       setEditingItem(null);
       setFormData({
