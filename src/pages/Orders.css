@@ -216,3 +216,172 @@
     gap: var(--spacing-md);
   }
 }
+
+/* Order Tooltip */
+.order-tooltip {
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  width: 350px;
+  max-height: 500px;
+  overflow-y: auto;
+  animation: tooltipFadeIn 0.2s ease-out;
+  border: 1px solid var(--color-border);
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-grey-50);
+}
+
+.tooltip-header h4 {
+  margin: 0;
+  font-size: 0.938rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.btn-copy {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-copy:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.tooltip-content {
+  padding: var(--spacing-md);
+}
+
+.tooltip-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.tooltip-section svg {
+  color: var(--color-primary);
+}
+
+.tooltip-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--spacing-md) 0;
+}
+
+.tooltip-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.tooltip-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-grey-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-light);
+}
+
+.tooltip-item-details {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.tooltip-item-qty {
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 0.813rem;
+  flex-shrink: 0;
+}
+
+.tooltip-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tooltip-item-name {
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip-item-serving {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.tooltip-item-price {
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tooltip-item-price.included {
+  color: var(--color-success);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.tooltip-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.938rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.tooltip-total-amount {
+  color: var(--color-primary);
+  font-size: 1.125rem;
+}
+
+/* Table row hover effect */
+.table-container tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.table-container tbody tr:hover {
+  background-color: var(--color-grey-50);
+}

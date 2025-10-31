@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Order } from '../types';
 import { OrderStatus, PaymentStatus, UserRole } from '../types';
 import api from '../services/api';
-import { Plus, Search, Eye, ShoppingBag, Calendar, X, Trash2 } from 'lucide-react';
+import { Plus, Search, Eye, ShoppingBag, Calendar, X, Trash2, Copy, Check } from 'lucide-react';
 import OrderModal from '../components/OrderModal';
 import { useAuth } from '../contexts/AuthContext';
 import './Orders.css';
@@ -19,6 +19,10 @@ const Orders: React.FC = () => {
     search: '',
     collectionDate: '',
   });
+  const [hoveredOrder, setHoveredOrder] = useState<string | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [copied, setCopied] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -89,6 +93,45 @@ const Orders: React.FC = () => {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const formatOrderSummary = (order: Order): string => {
+    const collectionDateTime = `${formatDate(order.collectionDate)} at ${order.collectionTime}`;
+    const divider = '─'.repeat(40);
+
+    let summary = `Collection: ${collectionDateTime}\n${divider}\n\n`;
+
+    order.items.forEach((item) => {
+      const itemPrice = item.isIncludedInBundle
+        ? 'AED 0.00 (included)'
+        : `AED ${item.price.toFixed(2)}`;
+      summary += `${item.quantity}x ${item.name} - ${item.servingSize}\n   ${itemPrice}\n\n`;
+    });
+
+    summary += `${divider}\n`;
+    summary += `Total: AED ${order.totalAmount.toFixed(2)}`;
+
+    return summary;
+  };
+
+  const handleCopyToClipboard = async (order: Order) => {
+    const summary = formatOrderSummary(order);
+    try {
+      await navigator.clipboard.writeText(summary);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
+  };
+
+  const handleRowHover = (orderId: string, event: React.MouseEvent<HTMLTableRowElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setTooltipPosition({
+      x: rect.right + 10,
+      y: rect.top
+    });
+    setHoveredOrder(orderId);
   };
 
   const handleDelete = async (order: Order) => {
@@ -228,7 +271,11 @@ const Orders: React.FC = () => {
               </thead>
               <tbody>
                 {filteredOrders.map((order) => (
-                  <tr key={order._id}>
+                  <tr
+                    key={order._id}
+                    onMouseEnter={(e) => handleRowHover(order._id, e)}
+                    onMouseLeave={() => setHoveredOrder(null)}
+                  >
                     <td className="order-number">{order.orderNumber}</td>
                     <td>
                       <div className="customer-info">
@@ -282,6 +329,72 @@ const Orders: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Order Details Tooltip */}
+      {hoveredOrder && (
+        <div
+          ref={tooltipRef}
+          className="order-tooltip"
+          style={{
+            position: 'fixed',
+            left: `${tooltipPosition.x}px`,
+            top: `${tooltipPosition.y}px`,
+            zIndex: 1000,
+          }}
+        >
+          {(() => {
+            const order = orders.find(o => o._id === hoveredOrder);
+            if (!order) return null;
+
+            return (
+              <>
+                <div className="tooltip-header">
+                  <h4>Order {order.orderNumber}</h4>
+                  <button
+                    className="btn-copy"
+                    onClick={() => handleCopyToClipboard(order)}
+                    title="Copy to clipboard"
+                  >
+                    {copied ? <Check size={16} /> : <Copy size={16} />}
+                  </button>
+                </div>
+                <div className="tooltip-content">
+                  <div className="tooltip-section">
+                    <Calendar size={14} />
+                    <span>
+                      {formatDate(order.collectionDate)} at {order.collectionTime}
+                    </span>
+                  </div>
+                  <div className="tooltip-divider"></div>
+                  <div className="tooltip-items">
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="tooltip-item">
+                        <div className="tooltip-item-details">
+                          <span className="tooltip-item-qty">{item.quantity}x</span>
+                          <div className="tooltip-item-info">
+                            <span className="tooltip-item-name">{item.name}</span>
+                            <span className="tooltip-item-serving">{item.servingSize}</span>
+                          </div>
+                        </div>
+                        <span className={`tooltip-item-price ${item.isIncludedInBundle ? 'included' : ''}`}>
+                          {item.isIncludedInBundle
+                            ? 'Included'
+                            : `AED ${item.price.toFixed(2)}`}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="tooltip-divider"></div>
+                  <div className="tooltip-total">
+                    <span>Total</span>
+                    <span className="tooltip-total-amount">AED {order.totalAmount.toFixed(2)}</span>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      )}
 
       <OrderModal
         isOpen={isOrderModalOpen}
