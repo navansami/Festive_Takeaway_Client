@@ -27,8 +27,10 @@ export const PaymentStatus = {
 export type PaymentStatus = typeof PaymentStatus[keyof typeof PaymentStatus];
 
 export const PaymentMethod = {
-  CASH: 'cash',
   CARD: 'card',
+  CASH: 'cash',
+  SERVME: 'servme',
+  SECUREPAY: 'securepay',
   BANK_TRANSFER: 'bank_transfer',
   OTHER: 'other'
 } as const;

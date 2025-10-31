@@ -264,6 +264,26 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
                   <input
                     type="radio"
                     name="paymentMethod"
+                    value={PaymentMethod.SERVME}
+                    checked={paymentMethod === PaymentMethod.SERVME}
+                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                  />
+                  <span>Servme</span>
+                </label>
+                <label className="payment-option">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value={PaymentMethod.SECUREPAY}
+                    checked={paymentMethod === PaymentMethod.SECUREPAY}
+                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                  />
+                  <span>Securepay</span>
+                </label>
+                <label className="payment-option">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
                     value={PaymentMethod.BANK_TRANSFER}
                     checked={paymentMethod === PaymentMethod.BANK_TRANSFER}
                     onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
@@ -315,7 +335,7 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
             className="btn-primary"
             disabled={loading || orderItems.length === 0}
           >
-            {loading ? 'Creating Order...' : 'Create Order'}
+            {loading ? 'Recording Order...' : 'Record Order'}
           </button>
         </div>
       </form>
