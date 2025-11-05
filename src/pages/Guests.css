@@ -121,6 +121,7 @@ table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.813rem;
 }
 
 thead {
@@ -129,7 +130,7 @@ thead {
 
 th {
   text-align: left;
-  padding: 12px 16px;
+  padding: 0.5rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -139,8 +140,8 @@ th {
 }
 
 td {
-  padding: 16px;
-  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.813rem;
   color: #374151;
   border-bottom: 1px solid #f3f4f6;
 }
@@ -187,28 +188,29 @@ table td:nth-child(6) {
   width: 18%;
   min-width: 140px;
   text-align: center;
-  padding: 12px 8px;
+  padding: 0.5rem 0.5rem;
 }
 
 /* Guest Name Styles */
 .guest-name {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .guest-name strong {
   color: #111827;
   font-weight: 600;
+  font-size: 0.813rem;
 }
 
 .dietary-badge {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 0.188rem 0.5rem;
   background-color: #fef3c7;
   color: #92400e;
   border-radius: 12px;
-  font-size: 0.75rem;
+  font-size: 0.688rem;
   font-weight: 500;
   width: fit-content;
 }
@@ -218,17 +220,18 @@ table td:nth-child(6) {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 0.875rem;
+  font-size: 0.813rem;
 }
 
 .contact-info span:first-child {
   color: #374151;
   font-weight: 500;
+  font-size: 0.813rem;
 }
 
 .contact-info span:last-child {
   color: #6b7280;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
 }
 
 /* Text Center Alignment */
@@ -241,18 +244,19 @@ table td:nth-child(6) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 12px;
+  padding: 0.188rem 0.5rem;
   background-color: #dbeafe;
   color: #1e40af;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.813rem;
 }
 
 /* Amount Styling */
 .amount {
   color: #059669;
   font-weight: 600;
+  font-size: 0.813rem;
 }
 
 /* Action Buttons Container */

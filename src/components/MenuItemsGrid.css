@@ -383,3 +383,15 @@
   font-weight: 700;
   font-size: 1.125rem;
 }
+
+.partial-bundle {
+  color: #f59e0b;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.bundle-note {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 400;
+}

@@ -249,6 +249,72 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
 
     const newItems = selectedItems.map((item) => {
       if (item.menuItem === menuItemId && item.servingSize === servingSize) {
+        // If no bundle, just calculate normally
+        if (!turkeyBundle || !canBeIncludedInBundle(menuItems.find(m => m._id === menuItemId)!)) {
+          return {
+            ...item,
+            quantity: newQuantity,
+            totalPrice: item.price * newQuantity,
+          };
+        }
+
+        const menuItem = menuItems.find(m => m._id === menuItemId);
+        const isSide = menuItem && (menuItem.category === 'potatoes' || menuItem.category === 'vegetables');
+        const isSauce = menuItem && menuItem.category === 'sauces';
+
+        if (isSide) {
+          // Calculate portions used by OTHER sides (excluding this item)
+          const otherSides = selectedItems.filter(
+            si => si.menuItem !== menuItemId || si.servingSize !== servingSize
+          ).filter(si => {
+            const mi = menuItems.find(m => m._id === si.menuItem);
+            return mi && (mi.category === 'potatoes' || mi.category === 'vegetables') && si.isIncludedInBundle;
+          });
+
+          const portionsUsedByOthers = otherSides.reduce((total, si) => {
+            return total + (getPortionsForServingSize(si.servingSize) * si.quantity);
+          }, 0);
+
+          const remainingPortions = turkeyBundle.maxPortions - portionsUsedByOthers;
+          const portionsPerItem = getPortionsForServingSize(servingSize);
+
+          // How many of this item can fit in remaining portions?
+          const includedQuantity = Math.floor(remainingPortions / portionsPerItem);
+          const chargedQuantity = Math.max(0, newQuantity - includedQuantity);
+
+          return {
+            ...item,
+            quantity: newQuantity,
+            totalPrice: item.price * chargedQuantity,
+            isIncludedInBundle: includedQuantity > 0, // Still part of bundle if at least 1 is included
+          };
+        }
+
+        if (isSauce) {
+          // Count OTHER sauces (excluding this item)
+          const otherSauces = selectedItems.filter(
+            si => si.menuItem !== menuItemId || si.servingSize !== servingSize
+          ).filter(si => {
+            const mi = menuItems.find(m => m._id === si.menuItem);
+            return mi && mi.category === 'sauces' && si.isIncludedInBundle;
+          });
+
+          const saucesUsedByOthers = otherSauces.reduce((total, si) => total + si.quantity, 0);
+          const remainingSauces = turkeyBundle.maxSauces - saucesUsedByOthers;
+
+          // How many of this sauce can be included?
+          const includedQuantity = Math.min(newQuantity, remainingSauces);
+          const chargedQuantity = Math.max(0, newQuantity - includedQuantity);
+
+          return {
+            ...item,
+            quantity: newQuantity,
+            totalPrice: item.price * chargedQuantity,
+            isIncludedInBundle: includedQuantity > 0, // Still part of bundle if at least 1 is included
+          };
+        }
+
+        // Fallback: regular pricing
         return {
           ...item,
           quantity: newQuantity,
@@ -411,10 +477,15 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
                               </button>
                             </div>
                             <span className="item-total">
-                              {selectedItem?.isIncludedInBundle ? (
+                              {selectedItem?.totalPrice === 0 ? (
                                 <span className="free-item">FREE</span>
+                              ) : selectedItem?.isIncludedInBundle && selectedItem.totalPrice > 0 ? (
+                                <span className="partial-bundle">
+                                  AED {selectedItem.totalPrice.toFixed(2)}
+                                  <span className="bundle-note"> (partial bundle)</span>
+                                </span>
                               ) : (
-                                `AED ${(pricing.price * quantity).toFixed(2)}`
+                                `AED ${selectedItem?.totalPrice.toFixed(2)}`
                               )}
                             </span>
                           </div>

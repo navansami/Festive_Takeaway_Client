@@ -351,21 +351,21 @@ const Orders: React.FC = () => {
                       </span>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <div className="action-buttons">
                         <button
-                          className="btn-secondary btn-sm"
+                          className="btn-icon btn-icon-primary"
                           onClick={() => navigate(`/dashboard/orders/${order._id}`)}
+                          title="View order details"
                         >
                           <Eye size={16} />
-                          <span>View</span>
                         </button>
                         {user?.role === UserRole.ADMIN && (
                           <button
-                            className="btn-danger btn-sm"
+                            className="btn-icon btn-icon-danger"
                             onClick={() => handleDelete(order)}
+                            title="Delete order"
                           >
                             <Trash2 size={16} />
-                            <span>Delete</span>
                           </button>
                         )}
                       </div>

@@ -461,22 +461,3 @@ tr:hover {
   border-left: 4px solid var(--color-success);
 }
 
-.orders-table {
-  table-layout: fixed;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table th:nth-child(7),
-table td:nth-child(7) {
-  width: 10%;
-  min-width: 100px;
-  text-align: center;
-}
-
-table th:nth-child(8),
-table td:nth-child(8) {
-  width: 8%;
-  min-width: 100px;
-  text-align: center;
-}
