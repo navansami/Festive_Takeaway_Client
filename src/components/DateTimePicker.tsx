@@ -7,6 +7,7 @@ interface DateTimePickerProps {
   selectedTime: string;
   onDateChange: (date: string) => void;
   onTimeChange: (time: string) => void;
+  allowPastDates?: boolean;
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
@@ -14,6 +15,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   selectedTime,
   onDateChange,
   onTimeChange,
+  allowPastDates = false,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
@@ -198,10 +200,10 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                         className={`calendar-day ${
                           isToday(date) ? 'today' : ''
                         } ${isSelected(date) ? 'selected' : ''} ${
-                          isPastDate(date) ? 'disabled' : ''
+                          !allowPastDates && isPastDate(date) ? 'disabled' : ''
                         }`}
-                        onClick={() => !isPastDate(date) && handleDateSelect(date)}
-                        disabled={isPastDate(date)}
+                        onClick={() => (allowPastDates || !isPastDate(date)) && handleDateSelect(date)}
+                        disabled={!allowPastDates && isPastDate(date)}
                       >
                         {date.getDate()}
                       </button>

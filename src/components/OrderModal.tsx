@@ -5,7 +5,7 @@ import DateTimePicker from './DateTimePicker';
 import MenuItemsGrid from './MenuItemsGrid';
 import { X } from 'lucide-react';
 import type { MenuItem, OrderItem, GuestDetails } from '../types';
-import { PaymentMethod } from '../types';
+import { PaymentMethod, OrderStatus, PaymentStatus } from '../types';
 import api from '../services/api';
 import './OrderModal.css';
 
@@ -32,6 +32,8 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
   const [collectionDate, setCollectionDate] = useState('');
   const [collectionTime, setCollectionTime] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.CARD);
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>(OrderStatus.PENDING);
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(PaymentStatus.PENDING);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
   useEffect(() => {
@@ -100,6 +102,8 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
         collectionDate,
         collectionTime,
         paymentMethod,
+        status: orderStatus,
+        paymentStatus: paymentStatus,
       };
 
       await api.createOrder(orderData);
@@ -114,6 +118,8 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
       setCollectionDate('');
       setCollectionTime('');
       setPaymentMethod(PaymentMethod.CARD);
+      setOrderStatus(OrderStatus.PENDING);
+      setPaymentStatus(PaymentStatus.PENDING);
       setOrderItems([]);
       setShowAddGuestForm(false);
 
@@ -233,7 +239,45 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
                 selectedTime={collectionTime}
                 onDateChange={setCollectionDate}
                 onTimeChange={setCollectionTime}
+                allowPastDates={true}
               />
+            </div>
+
+            {/* Order Status */}
+            <div className="form-section">
+              <h3 className="section-title">Order Status</h3>
+              <div className="form-group">
+                <label htmlFor="orderStatus">Status</label>
+                <select
+                  id="orderStatus"
+                  value={orderStatus}
+                  onChange={(e) => setOrderStatus(e.target.value as OrderStatus)}
+                  className="form-select"
+                >
+                  <option value={OrderStatus.PENDING}>Pending</option>
+                  <option value={OrderStatus.CONFIRMED}>Confirmed</option>
+                  <option value={OrderStatus.AWAITING_COLLECTION}>Awaiting Collection</option>
+                  <option value={OrderStatus.COLLECTED}>Collected</option>
+                  <option value={OrderStatus.ON_HOLD}>On Hold</option>
+                  <option value={OrderStatus.DELAYED}>Delayed</option>
+                  <option value={OrderStatus.CANCELLED}>Cancelled</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="paymentStatus">Payment Status</label>
+                <select
+                  id="paymentStatus"
+                  value={paymentStatus}
+                  onChange={(e) => setPaymentStatus(e.target.value as PaymentStatus)}
+                  className="form-select"
+                >
+                  <option value={PaymentStatus.PENDING}>Pending</option>
+                  <option value={PaymentStatus.PARTIAL}>Partial</option>
+                  <option value={PaymentStatus.PAID}>Paid</option>
+                  <option value={PaymentStatus.REFUNDED}>Refunded</option>
+                </select>
+              </div>
             </div>
 
             {/* Payment Method */}
