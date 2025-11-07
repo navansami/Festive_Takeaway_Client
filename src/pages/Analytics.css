@@ -1,34 +1,55 @@
+/* Mobile-First Analytics Page - Flat Design */
+
 .analytics-page {
-  max-width: 800px;
+  width: 100%;
+  max-width: 100%;
 }
 
+/* Mobile First - Single column */
 .export-form {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: var(--spacing-lg);
-  align-items: end;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  align-items: stretch;
+}
+
+.export-form button {
+  width: 100%;
 }
 
 .quick-ranges {
   display: flex;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
-@media (max-width: 768px) {
+.quick-ranges button {
+  width: 100%;
+}
+
+/* Tablet and up - Multi-column layout */
+@media (min-width: 768px) {
+  .analytics-page {
+    max-width: 800px;
+  }
+
   .export-form {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr auto;
+    gap: var(--spacing-lg);
+    align-items: end;
   }
 
   .export-form button {
-    width: 100%;
+    width: auto;
   }
 
   .quick-ranges {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
   }
 
   .quick-ranges button {
-    width: 100%;
+    width: auto;
   }
 }

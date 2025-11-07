@@ -30,7 +30,7 @@
   margin-left: 0.25rem;
 }
 
-/* Date Input */
+/* Date Input - Flat Design */
 .date-input-wrapper {
   position: relative;
 }
@@ -39,43 +39,45 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 0.9375rem;
+  gap: var(--spacing-sm);
+  padding: 0.75rem;
+  background-color: var(--color-white);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 16px;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--transition-base);
   text-align: left;
 }
 
 .date-input:hover {
-  border-color: #1976d2;
+  border-color: var(--color-primary);
 }
 
 .date-input:focus {
   outline: none;
-  border-color: #1976d2;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .date-input span {
-  flex: 8;
-  color: #1a1a1a;
+  flex: 1;
+  color: var(--color-text-primary);
 }
 
-/* Calendar Dropdown */
+/* Calendar Dropdown - Flat Design */
 .calendar-dropdown {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  right: 0;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   z-index: 1000;
-  padding: 0.75rem;
-  width: 160%;
+  padding: var(--spacing-md);
+  width: 100%;
+  max-width: 320px;
 }
 
 .calendar-header {

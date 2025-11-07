@@ -59,7 +59,9 @@ const Modal: React.FC<ModalProps> = ({
             <X size={24} />
           </button>
         </div>
-        <div className="modal-body">{children}</div>
+        <div className="modal-body-wrapper">
+          <div className="modal-body">{children}</div>
+        </div>
       </div>
     </div>
   );

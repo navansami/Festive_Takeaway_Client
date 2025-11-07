@@ -1,16 +1,27 @@
+/* Mobile-First Users Page - Flat Design */
+
 .users-page {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 100%;
 }
 
+/* Mobile First - Stacked buttons */
 .action-buttons {
   display: flex;
+  flex-direction: column;
   gap: var(--spacing-sm);
 }
 
+.action-buttons button {
+  width: 100%;
+}
+
+/* Flat Role Badges */
 .role-badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border-radius: 12px;
+  border: 1px solid;
+  border-radius: var(--radius-md);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -18,18 +29,21 @@
 }
 
 .role-badge.role-admin {
-  background-color: #e3f2fd;
-  color: #1565c0;
+  background-color: var(--color-info-light);
+  border-color: var(--color-info);
+  color: var(--color-info-dark);
 }
 
 .role-badge.role-order-taker {
   background-color: #f3e5f5;
+  border-color: #ab47bc;
   color: #6a1b9a;
 }
 
 .role-badge.role-operations {
-  background-color: #fff3e0;
-  color: #e65100;
+  background-color: var(--color-warning-light);
+  border-color: var(--color-warning);
+  color: var(--color-warning-dark);
 }
 
 .error-container {
@@ -41,12 +55,17 @@
   text-align: center;
 }
 
-@media (max-width: 768px) {
+/* Tablet and up */
+@media (min-width: 768px) {
+  .users-page {
+    max-width: 1200px;
+  }
+
   .action-buttons {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .action-buttons button {
-    width: 100%;
+    width: auto;
   }
 }

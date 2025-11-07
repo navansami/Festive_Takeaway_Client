@@ -28,16 +28,17 @@
   }
 }
 
+/* Flat Menu Item Card */
 .menu-item-card {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1rem;
-  transition: all 0.2s ease;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: border-color var(--transition-fast);
 }
 
 .menu-item-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-grey-300);
 }
 
 .menu-item-header {
@@ -251,16 +252,16 @@
   color: #999;
 }
 
+/* Flat Order Summary */
 .order-summary {
   position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
-  border-top: 2px solid #e0e0e0;
-  padding: 1rem;
-  margin-top: 2rem;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-white);
+  border-top: 2px solid var(--color-border);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
   z-index: 10;
 }
 
@@ -336,24 +337,24 @@
   }
 }
 
-/* Bundle Pricing Styles */
+/* Bundle Pricing Styles - Flat Design */
 .bundle-info-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .bundle-info-content h4 {
-  color: white;
+  color: var(--color-primary);
   font-size: 1.125rem;
   font-weight: 700;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 var(--spacing-sm) 0;
 }
 
 .bundle-info-content p {
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--color-text-primary);
   font-size: 0.875rem;
   margin: 0;
   line-height: 1.5;

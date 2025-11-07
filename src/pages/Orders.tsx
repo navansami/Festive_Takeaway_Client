@@ -298,6 +298,72 @@ const Orders: React.FC = () => {
           </div>
         ) : (
           <div className="table-container">
+            {/* Mobile Card View */}
+            {filteredOrders.map((order) => (
+              <div key={order._id} className="order-card" onClick={() => navigate(`/dashboard/orders/${order._id}`)}>
+                <div className="order-card-header">
+                  <h3 className="order-number">{order.orderNumber}</h3>
+                  <span className={`badge ${getStatusBadgeClass(order.status)}`}>
+                    {order.status.replace(/_/g, ' ')}
+                  </span>
+                </div>
+                <div className="order-card-body">
+                  <div className="order-info-row">
+                    <span className="order-info-label">Customer:</span>
+                    <span className="order-info-value customer-name">{order.guestDetails.name}</span>
+                  </div>
+                  <div className="order-info-row">
+                    <span className="order-info-label">Collection:</span>
+                    <span className="order-info-value">
+                      {formatDate(order.collectionDate)} at {order.collectionTime}
+                    </span>
+                  </div>
+                  <div className="order-info-row">
+                    <span className="order-info-label">Items:</span>
+                    <span className="order-info-value">{order.items.length}</span>
+                  </div>
+                  <div className="order-info-row">
+                    <span className="order-info-label">Total:</span>
+                    <span className="order-info-value amount">AED {order.totalAmount.toFixed(2)}</span>
+                  </div>
+                  <div className="order-info-row">
+                    <span className="order-info-label">Payment:</span>
+                    <span className="order-info-value">
+                      <span className={`badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
+                        {order.paymentStatus}
+                      </span>
+                      {' '}Paid: AED {order.totalPaid.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+                <div className="order-card-actions">
+                  <button
+                    className="btn-icon btn-icon-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/dashboard/orders/${order._id}`);
+                    }}
+                    title="View order details"
+                  >
+                    <Eye size={16} />
+                  </button>
+                  {user?.role === UserRole.ADMIN && (
+                    <button
+                      className="btn-icon btn-icon-danger"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(order);
+                      }}
+                      title="Delete order"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {/* Desktop Table View */}
             <table>
               <thead>
                 <tr>

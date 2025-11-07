@@ -1,20 +1,98 @@
+/* Mobile-First Dashboard Layout - Flat Design */
+
 .dashboard-layout {
-  display: flex;
   min-height: 100vh;
   background-color: var(--color-background-secondary);
 }
 
+/* Mobile Header */
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.mobile-menu-toggle {
+  padding: var(--spacing-sm);
+  background: none;
+  border: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.mobile-menu-toggle:hover {
+  background-color: var(--color-grey-100);
+}
+
+.mobile-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-black);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.mobile-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 2px solid var(--color-border);
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 110;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sidebar - Mobile First */
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
   width: 280px;
+  height: 100vh;
   background-color: var(--color-white);
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  z-index: 10;
+  transition: left var(--transition-base);
+  z-index: 120;
+  overflow-y: auto;
+}
+
+.sidebar.mobile-open {
+  left: 0;
 }
 
 .sidebar-header {
@@ -24,66 +102,57 @@
 
 .sidebar-header h2 {
   font-size: 1.25rem;
-  color: var(--color-primary);
-  margin-bottom: var(--spacing-xs);
   font-weight: 700;
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-xs) 0;
   letter-spacing: -0.02em;
 }
 
 .sidebar-header p {
+  font-size: 0.875rem;
   color: var(--color-text-secondary);
-  font-size: 0.813rem;
   margin: 0;
-  font-weight: 500;
 }
 
+/* Navigation */
 .sidebar-nav {
   flex: 1;
   padding: var(--spacing-lg) 0;
-  overflow-y: auto;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  padding: 0.75rem var(--spacing-lg);
-  margin: 0.125rem var(--spacing-md);
-  color: var(--color-text-primary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--color-text-secondary);
   text-decoration: none;
-  transition: all 0.15s ease;
-  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  font-size: 0.9375rem;
   font-weight: 500;
-  font-size: 0.938rem;
+  border-left: 3px solid transparent;
 }
 
 .nav-link:hover {
-  background-color: var(--color-grey-100);
-  color: var(--color-primary);
-  text-decoration: none;
-  transform: translateX(2px);
+  background-color: var(--color-grey-50);
+  color: var(--color-text-primary);
 }
 
 .nav-link.active {
-  background-color: var(--color-primary-light);
+  background-color: var(--color-primary-50);
   color: var(--color-primary);
-  font-weight: 600;
-  box-shadow: var(--shadow-xs);
+  border-left-color: var(--color-primary);
 }
 
 .nav-icon {
   flex-shrink: 0;
-  opacity: 0.9;
 }
 
-.nav-link.active .nav-icon,
-.nav-link:hover .nav-icon {
-  opacity: 1;
-}
-
+/* Sidebar Footer */
 .sidebar-footer {
   padding: var(--spacing-lg);
   border-top: 1px solid var(--color-border);
+  background-color: var(--color-grey-50);
 }
 
 .user-info {
@@ -97,64 +166,94 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
   color: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1rem;
-  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
 }
 
 .user-details {
-  flex: 1;
   min-width: 0;
+  flex: 1;
 }
 
 .user-name {
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 0.125rem 0;
-  font-size: 0.875rem;
+  color: var(--color-black);
+  margin: 0 0 2px 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2;
 }
 
 .user-role {
+  font-size: 0.8125rem;
   color: var(--color-text-tertiary);
-  font-size: 0.75rem;
   margin: 0;
   text-transform: capitalize;
-  line-height: 1.2;
 }
 
 .logout-btn {
-  gap: var(--spacing-sm);
+  width: 100%;
   justify-content: center;
-  font-weight: 500;
-  transition: all 0.2s ease;
 }
 
-.logout-btn:hover:not(:disabled) {
-  background-color: var(--color-grey-200);
-  transform: translateY(-1px);
-}
-
+/* Main Content */
 .main-content {
-  flex: 1;
-  padding: var(--spacing-xl);
-  overflow-y: auto;
+  min-height: calc(100vh - 60px);
+  padding: var(--spacing-lg);
 }
 
-@media (max-width: 768px) {
+/* Tablet and up */
+@media (min-width: 768px) {
+  .mobile-header {
+    display: none;
+  }
+
+  .mobile-overlay {
+    display: none;
+  }
+
   .sidebar {
-    width: 240px;
+    position: fixed;
+    left: 0;
+    width: 260px;
   }
 
   .main-content {
-    padding: var(--spacing-lg);
+    margin-left: 260px;
+    min-height: 100vh;
+    padding: var(--spacing-xl);
+  }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  .sidebar {
+    width: 280px;
+  }
+
+  .main-content {
+    margin-left: 280px;
+    padding: var(--spacing-2xl);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .nav-link,
+  .mobile-overlay {
+    transition: none;
+  }
+
+  .mobile-overlay {
+    animation: none;
   }
 }
