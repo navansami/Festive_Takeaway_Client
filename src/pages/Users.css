@@ -6,13 +6,13 @@
 }
 
 /* Mobile First - Stacked buttons */
-.action-buttons {
+.users-page .action-buttons {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
 }
 
-.action-buttons button {
+.users-page .action-buttons button {
   width: 100%;
 }
 
@@ -61,11 +61,11 @@
     max-width: 1200px;
   }
 
-  .action-buttons {
+  .users-page .action-buttons {
     flex-direction: row;
   }
 
-  .action-buttons button {
+  .users-page .action-buttons button {
     width: auto;
   }
 }

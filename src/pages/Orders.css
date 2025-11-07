@@ -266,7 +266,7 @@
 }
 
 /* Icon Buttons - Flat Design */
-.btn-icon {
+.orders-page .btn-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -281,29 +281,29 @@
   height: 32px;
 }
 
-.btn-icon:disabled {
+.orders-page .btn-icon:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.btn-icon-primary {
+.orders-page .btn-icon-primary {
   color: var(--color-primary);
   border-color: var(--color-primary-200);
   background-color: var(--color-primary-50);
 }
 
-.btn-icon-primary:hover:not(:disabled) {
+.orders-page .btn-icon-primary:hover:not(:disabled) {
   background-color: var(--color-primary-100);
   border-color: var(--color-primary-300);
 }
 
-.btn-icon-danger {
+.orders-page .btn-icon-danger {
   color: var(--color-error);
   border-color: var(--color-error-200);
   background-color: var(--color-error-light);
 }
 
-.btn-icon-danger:hover:not(:disabled) {
+.orders-page .btn-icon-danger:hover:not(:disabled) {
   background-color: #fecaca;
   border-color: #fca5a5;
 }
@@ -314,12 +314,12 @@
 }
 
 /* Action buttons container for table */
-.action-buttons {
+.orders-page .action-buttons {
   display: flex;
   gap: 0.125rem;
   justify-content: center;
   align-items: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 100%;
   max-width: 100%;
 }
@@ -580,22 +580,30 @@
   }
 
   /* Column widths - Fixed to prevent overflow */
-  table th:nth-child(1), table td:nth-child(1) { width: 8%; min-width: 80px; }
-  table th:nth-child(2), table td:nth-child(2) { width: 18%; min-width: 140px; }
-  table th:nth-child(3), table td:nth-child(3) { width: 12%; min-width: 100px; }
-  table th:nth-child(4), table td:nth-child(4) { width: 7%; min-width: 60px; text-align: center; }
-  table th:nth-child(5), table td:nth-child(5) { width: 11%; min-width: 90px; }
-  table th:nth-child(6), table td:nth-child(6) { width: 14%; min-width: 110px; }
-  table th:nth-child(7), table td:nth-child(7) { width: 12%; min-width: 90px; }
-  table th:nth-child(8), table td:nth-child(8) {
-    width: 8%;
-    min-width: 90px;
-    /* Remove max-width to allow flexibility */
+  .orders-page table th:nth-child(1),
+  .orders-page table td:nth-child(1) { width: 10%; }
+  .orders-page table th:nth-child(2),
+  .orders-page table td:nth-child(2) { width: 20%; }
+  .orders-page table th:nth-child(3),
+  .orders-page table td:nth-child(3) { width: 13%; }
+  .orders-page table th:nth-child(4),
+  .orders-page table td:nth-child(4) { width: 7%; text-align: center; }
+  .orders-page table th:nth-child(5),
+  .orders-page table td:nth-child(5) { width: 10%; }
+  .orders-page table th:nth-child(6),
+  .orders-page table td:nth-child(6) { width: 13%; }
+  .orders-page table th:nth-child(7),
+  .orders-page table td:nth-child(7) { width: 12%; }
+  .orders-page table th:nth-child(8),
+  .orders-page table td:nth-child(8) {
+    width: 15%;
+    min-width: 6rem;
     text-align: center;
-    padding: 0.25rem;
+    padding: 0.5rem;
+    white-space: nowrap;
   }
 
-  .btn-icon {
+  .orders-page .btn-icon {
     width: 28px;
     height: 28px;
     padding: 4px;
@@ -611,5 +619,17 @@
   .table-container table th,
   .table-container table td {
     padding: 0.75rem 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .orders-page .action-buttons {
+    gap: 0.25rem; /* or even 0.125rem */
+  }
+
+  .orders-page .btn-icon {
+    width: 26px;
+    height: 26px;
+    padding: 3px;
   }
 }
