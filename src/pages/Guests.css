@@ -295,6 +295,21 @@ td {
   width: 100%;
   max-width: 100%;
 }
+.action-buttons {
+  position: relative;
+}
+.btn-icon-danger {
+  position: absolute;
+  left: 160px;
+}
+.btn-icon-primary {
+  position: absolute;
+  left: 60px;
+}
+.btn-icon-secondary {
+  position: absolute;
+  left: 110px;
+}
 
 .guests-page .btn-icon {
   display: inline-flex;

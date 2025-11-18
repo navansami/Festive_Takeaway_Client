@@ -374,7 +374,7 @@ const Orders: React.FC = () => {
                   <th>Total</th>
                   <th>Payment</th>
                   <th>Status</th>
-                  <th>Actions</th>
+                  <th className="actions-header">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -416,10 +416,11 @@ const Orders: React.FC = () => {
                         {order.status.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td>
+                    <td className="actions-cell">
                       <div className="action-buttons">
                         <button
                           className="btn-icon btn-icon-primary"
+                          type="button"
                           onClick={() => navigate(`/dashboard/orders/${order._id}`)}
                           title="View order details"
                         >
@@ -428,6 +429,7 @@ const Orders: React.FC = () => {
                         {user?.role === UserRole.ADMIN && (
                           <button
                             className="btn-icon btn-icon-danger"
+                            type="button"
                             onClick={() => handleDelete(order)}
                             title="Delete order"
                           >
