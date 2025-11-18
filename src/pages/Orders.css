@@ -348,11 +348,11 @@
 }
 .orders-page .btn-icon-danger {
   position: absolute;
-  left: 80px;
+  left: 40px;
 }
 .orders-page .btn-icon-primary {
   position: absolute;
-  left: 20px;
+  left: 15px;
 }
 
 /* Empty State */
