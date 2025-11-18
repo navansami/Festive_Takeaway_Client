@@ -308,37 +308,52 @@ const Orders: React.FC = () => {
                   </span>
                 </div>
                 <div className="order-card-body">
-                  <div className="order-info-row">
-                    <span className="order-info-label">Customer:</span>
-                    <span className="order-info-value customer-name">{order.guestDetails.name}</span>
+                  <div className="order-card-section">
+                    <p className="order-card-section-title">Customer</p>
+                    <div className="order-info-row">
+                      <span className="order-info-label">Name</span>
+                      <span className="order-info-value customer-name">{order.guestDetails.name}</span>
+                    </div>
+                    <div className="order-info-row">
+                      <span className="order-info-label">Email</span>
+                      <span className="order-info-value">{order.guestDetails.email}</span>
+                    </div>
                   </div>
-                  <div className="order-info-row">
-                    <span className="order-info-label">Collection:</span>
-                    <span className="order-info-value">
-                      {formatDate(order.collectionDate)} at {order.collectionTime}
-                    </span>
-                  </div>
-                  <div className="order-info-row">
-                    <span className="order-info-label">Items:</span>
-                    <span className="order-info-value">{order.items.length}</span>
-                  </div>
-                  <div className="order-info-row">
-                    <span className="order-info-label">Total:</span>
-                    <span className="order-info-value amount">AED {order.totalAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="order-info-row">
-                    <span className="order-info-label">Payment:</span>
-                    <span className="order-info-value">
-                      <span className={`badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
-                        {order.paymentStatus}
+
+                  <div className="order-card-section">
+                    <p className="order-card-section-title">Collection</p>
+                    <div className="order-info-row">
+                      <span className="order-info-label">Customer:</span>
+                      <span className="order-info-value">
+                        {formatDate(order.collectionDate)} at {order.collectionTime}
                       </span>
-                      {' '}Paid: AED {order.totalPaid.toFixed(2)}
-                    </span>
+                    </div>
+                    <div className="order-info-row">
+                      <span className="order-info-label">Items:</span>
+                      <span className="order-info-value">{order.items.length}</span>
+                    </div>
+                  </div>
+
+                  <div className="order-card-section">
+                    <p className="order-card-section-title">Payment</p>
+                    <div className="order-info-row">
+                      <span className="order-info-label">Total:</span>
+                      <span className="order-info-value amount">AED {order.totalAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="order-info-row">
+                      <span className="order-info-label">Status:</span>
+                      <span className="order-info-value">
+                        <span className={`badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
+                          {order.paymentStatus}
+                        </span>
+                        {' '}Paid: AED {order.totalPaid.toFixed(2)}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="order-card-actions">
                   <button
-                    className="btn-icon btn-icon-primary"
+                    className="btn-secondary"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/dashboard/orders/${order._id}`);
@@ -346,10 +361,11 @@ const Orders: React.FC = () => {
                     title="View order details"
                   >
                     <Eye size={16} />
+                    <span>View</span>
                   </button>
                   {user?.role === UserRole.ADMIN && (
                     <button
-                      className="btn-icon btn-icon-danger"
+                      className="btn-danger"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDelete(order);
@@ -357,6 +373,7 @@ const Orders: React.FC = () => {
                       title="Delete order"
                     >
                       <Trash2 size={16} />
+                      <span>Delete</span>
                     </button>
                   )}
                 </div>

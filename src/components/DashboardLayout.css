@@ -208,6 +208,7 @@
 .main-content {
   min-height: calc(100vh - 60px);
   padding: var(--spacing-lg);
+  padding-bottom: calc(64px + var(--spacing-lg));
 }
 
 /* Tablet and up */
@@ -230,6 +231,7 @@
     margin-left: 260px;
     min-height: 100vh;
     padding: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
   }
 }
 
@@ -242,6 +244,7 @@
   .main-content {
     margin-left: 280px;
     padding: var(--spacing-2xl);
+    padding-bottom: var(--spacing-2xl);
   }
 }
 

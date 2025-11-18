@@ -22,6 +22,13 @@ const Users: React.FC = () => {
     isActive: true,
   });
 
+  const formatDate = (value: string) =>
+    new Date(value).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -146,7 +153,7 @@ const Users: React.FC = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      <div className="card">
+      <div className="card users-table">
         <div className="table-container">
           <table>
             <thead>
@@ -180,13 +187,7 @@ const Users: React.FC = () => {
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td>
-                    {new Date(user.createdAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </td>
+                  <td>{formatDate(user.createdAt)}</td>
                   <td>
                     <div className="action-buttons">
                       <button
@@ -211,6 +212,58 @@ const Users: React.FC = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className="users-card-list">
+        {users.map((user) => (
+          <div key={user._id} className="user-card">
+            <div className="user-card-header">
+              <div className="user-card-avatar">
+                {user.name?.charAt(0).toUpperCase() || 'U'}
+              </div>
+              <div className="user-card-details">
+                <h3>{user.name}</h3>
+                <p>{user.email}</p>
+              </div>
+              <span className={`role-badge role-${user.role}`}>
+                {user.role.replace(/-/g, ' ').toUpperCase()}
+              </span>
+            </div>
+
+            <div className="user-card-body">
+              <div className="user-card-row">
+                <span className="label">Status</span>
+                <span className={`badge ${user.isActive ? 'badge-success' : 'badge-danger'}`}>
+                  {user.isActive ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+              <div className="user-card-row">
+                <span className="label">Added</span>
+                <span>{formatDate(user.createdAt)}</span>
+              </div>
+            </div>
+
+            <div className="user-card-actions">
+              <button
+                className="btn-secondary"
+                type="button"
+                onClick={() => handleOpenModal(user)}
+              >
+                <Edit2 size={16} />
+                <span>Edit</span>
+              </button>
+              <button
+                className="btn-danger"
+                type="button"
+                onClick={() => handleDelete(user._id)}
+                disabled={user._id === currentUser._id}
+              >
+                <Trash2 size={16} />
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {showModal && (

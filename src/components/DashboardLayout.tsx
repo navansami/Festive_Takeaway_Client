@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { UserRole } from '../types';
 import { LayoutDashboard, ShoppingBag, UtensilsCrossed, Users, TrendingUp, LogOut, UserCircle, Menu, X } from 'lucide-react';
 import './DashboardLayout.css';
+import MobileNav from './MobileNav';
 
 const DashboardLayout: React.FC = () => {
   const { user, logout } = useAuth();
@@ -103,6 +104,8 @@ const DashboardLayout: React.FC = () => {
       <main className="main-content">
         <Outlet />
       </main>
+
+      <MobileNav />
     </div>
   );
 };

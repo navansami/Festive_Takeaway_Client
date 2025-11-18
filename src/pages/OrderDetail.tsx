@@ -178,12 +178,23 @@ const OrderDetail: React.FC = () => {
 
   return (
     <div className="order-detail-page">
-      <div className="page-header">
-        <div>
-          <h1>Order {order.orderNumber}</h1>
-          <p>Created on {formatDateTime(order.createdAt)}</p>
+      <div className="order-summary-card card">
+        <div className="order-summary-header">
+          <div>
+            <p className="order-summary-label">Order</p>
+            <h1>Order {order.orderNumber}</h1>
+            <p className="order-summary-meta">Created on {formatDateTime(order.createdAt)}</p>
+          </div>
+          <div className="order-summary-badges">
+            <span className={`badge badge-large ${getStatusBadgeClass(order.status)}`}>
+              {order.status.replace(/_/g, ' ')}
+            </span>
+            <span className={`badge badge-large ${getPaymentBadgeClass(order.paymentStatus)}`}>
+              {order.paymentStatus}
+            </span>
+          </div>
         </div>
-        <div className="header-actions">
+        <div className="order-actions-grid">
           <button
             className="btn-secondary"
             onClick={() => navigate('/dashboard/orders')}

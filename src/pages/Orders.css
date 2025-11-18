@@ -126,24 +126,29 @@
 /* Mobile Card View */
 .order-card {
   padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
-  transition: background-color var(--transition-fast);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   cursor: pointer;
+  background-color: var(--color-white);
 }
 
+
 .order-card:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .order-card:active {
   background-color: var(--color-grey-50);
 }
 
-.order-card-header {
+ .order-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 .order-number {
@@ -217,6 +222,26 @@
   margin-bottom: var(--spacing-md);
 }
 
+.order-card-section {
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.order-card-section:last-child {
+  margin-bottom: 0;
+}
+
+.order-card-section-title {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+}
+
 .order-info-row {
   display: flex;
   align-items: flex-start;
@@ -262,9 +287,13 @@
 .order-card-actions {
   display: flex;
   gap: var(--spacing-sm);
-  justify-content: flex-end;
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--color-border-light);
+  justify-content: space-between;
+  padding-top: var(--spacing-md);
+}
+
+.order-card-actions button {
+  flex: 1;
+  justify-content: center;
 }
 
 /* Icon Buttons - Flat Design */
@@ -676,5 +705,4 @@
     left: 40px;
   }
 }
-
 

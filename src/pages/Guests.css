@@ -88,6 +88,11 @@
   cursor: pointer;
 }
 
+.guest-card-list {
+  display: flex;
+  flex-direction: column;
+}
+
 .guest-card:last-child {
   border-bottom: none;
 }
@@ -195,10 +200,16 @@
 
 .guest-card-actions {
   display: flex;
+  flex-direction: column;
   gap: var(--spacing-sm);
-  justify-content: flex-end;
+  justify-content: stretch;
   padding-top: var(--spacing-sm);
   border-top: 1px solid var(--color-border-light);
+}
+
+.guest-card-actions button {
+  width: 100%;
+  justify-content: center;
 }
 
 /* Table Styles for Desktop */
@@ -288,27 +299,11 @@ td {
 .guests-page .actions,
 .guests-page .action-buttons {
   display: flex;
-  gap: 0.125rem;
+  gap: var(--spacing-xs);
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 100%;
-}
-.action-buttons {
-  position: relative;
-}
-.btn-icon-danger {
-  position: absolute;
-  left: 160px;
-}
-.btn-icon-primary {
-  position: absolute;
-  left: 60px;
-}
-.btn-icon-secondary {
-  position: absolute;
-  left: 110px;
+  flex-wrap: nowrap;
+  width: auto;
 }
 
 .guests-page .btn-icon {
@@ -420,6 +415,7 @@ td {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .page-indicator {
@@ -462,6 +458,10 @@ td {
     display: none;
   }
 
+  .guest-card-list {
+    display: none;
+  }
+
   .guests-page table {
     display: table;
   }
@@ -501,4 +501,21 @@ td {
   td {
     padding: 0.75rem 1rem;
   }
+}
+
+
+.action-buttons {
+  position: relative;
+}
+.btn-icon-danger {
+  position: absolute;
+  left: 160px;
+}
+.btn-icon-primary {
+  position: absolute;
+  left: 60px;
+}
+.btn-icon-secondary {
+  position: absolute;
+  left: 110px;
 }

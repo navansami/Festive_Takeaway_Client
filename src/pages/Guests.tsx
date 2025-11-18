@@ -158,6 +158,88 @@ const Guests: React.FC = () => {
           </div>
         ) : (
           <>
+            <div className="guest-card-list">
+              {guests.map((guest) => (
+                <div
+                  key={guest._id}
+                  className="guest-card"
+                  onClick={() => navigate(`/dashboard/guests/${guest._id}`)}
+                >
+                  <div className="guest-card-header">
+                    <div className="guest-name-mobile">
+                      <strong>{guest.name}</strong>
+                      {guest.dietaryRequirements && (
+                        <span className="dietary-badge">{guest.dietaryRequirements}</span>
+                      )}
+                    </div>
+                    <div className="guest-card-stats">
+                      <div className="guest-stat">
+                        <span className="guest-stat-label">Orders</span>
+                        <span className="guest-stat-value orders">{guest.totalOrders}</span>
+                      </div>
+                      <div className="guest-stat">
+                        <span className="guest-stat-label">Spent</span>
+                        <span className="guest-stat-value spent">
+                          AED {guest.totalSpent.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="guest-card-body">
+                    <div className="guest-info-row">
+                      <span className="guest-info-label">Email</span>
+                      <span className="guest-info-value">{guest.email}</span>
+                    </div>
+                    <div className="guest-info-row">
+                      <span className="guest-info-label">Phone</span>
+                      <span className="guest-info-value">{guest.phone || 'N/A'}</span>
+                    </div>
+                    <div className="guest-info-row">
+                      <span className="guest-info-label">Last Order</span>
+                      <span className="guest-info-value">{formatDate(guest.lastOrderDate)}</span>
+                    </div>
+                  </div>
+
+                  <div className="guest-card-actions">
+                    <button
+                      className="btn-secondary"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/dashboard/guests/${guest._id}`);
+                      }}
+                    >
+                      <Eye size={16} />
+                      <span>View</span>
+                    </button>
+                    <button
+                      className="btn-primary"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(guest);
+                      }}
+                    >
+                      <Edit2 size={16} />
+                      <span>Edit</span>
+                    </button>
+                    <button
+                      className="btn-danger"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(guest);
+                      }}
+                    >
+                      <Trash2 size={16} />
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <div className="table-container">
               <table>
                 <thead>
