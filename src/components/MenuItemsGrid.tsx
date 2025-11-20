@@ -29,9 +29,25 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
       // Fallback to hardcoded logic if no bundle config exists
       const turkeyPrice = turkeyItem.price;
       if (turkeyPrice === 650) {
-        return { size: 4, maxPortions: 2, maxSauces: 1, price: 650, noMixing: true };
+        return {
+          size: 8,
+          maxPortions: 4,
+          maxSauces: 1,
+          price: 650,
+          noMixing: true,
+          allowedSidesServingSize: 'For 8 people',
+          allowedSaucesServingSize: 'Large'
+        };
       } else if (turkeyPrice === 850) {
-        return { size: 8, maxPortions: 4, maxSauces: 1, price: 850, noMixing: false };
+        return {
+          size: 8,
+          maxPortions: 4,
+          maxSauces: 1,
+          price: 850,
+          noMixing: true,
+          allowedSidesServingSize: 'For 8 people',
+          allowedSaucesServingSize: 'Large'
+        };
       }
       return null;
     }
@@ -43,13 +59,20 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
 
     if (!bundleConfig) return null;
 
+    // Find matching package constraints for this serving size
+    const packageConstraint = menuItem.packageConstraints?.find(
+      constraint => constraint.servingSize === turkeyItem.servingSize
+    );
+
     return {
       size: bundleConfig.allowMixing ? 8 : 4,
       maxPortions: bundleConfig.maxPortions,
       maxSauces: bundleConfig.maxSauces,
       price: turkeyItem.price,
       noMixing: !bundleConfig.allowMixing,
-      portionValues: bundleConfig.portionValues
+      portionValues: bundleConfig.portionValues,
+      allowedSidesServingSize: packageConstraint?.allowedSides?.servingSize,
+      allowedSaucesServingSize: packageConstraint?.allowedSauces?.servingSize
     };
   };
 
@@ -191,10 +214,15 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
     const isSauce = menuItem.category === 'sauces';
 
     if (isSide) {
+      // Check if this serving size is allowed in the bundle
+      if (turkeyBundle.allowedSidesServingSize && servingSize !== turkeyBundle.allowedSidesServingSize) {
+        return false; // Only the specified serving size can be included
+      }
+
       const portionsNeeded = getPortionsForServingSize(servingSize);
       const remainingPortions = turkeyBundle.maxPortions - bundleCounts.portions;
 
-      // For AED 650 (noMixing = true): Can't mix 4ppl and 8ppl sizes
+      // For AED 650/850 (noMixing = true): Can't mix 4ppl and 8ppl sizes
       if (turkeyBundle.noMixing) {
         const is4ppl = servingSize.toLowerCase().includes('4');
         const is8ppl = servingSize.toLowerCase().includes('8');
@@ -208,7 +236,14 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
       return portionsNeeded <= remainingPortions;
     }
 
-    if (isSauce && bundleCounts.sauces < turkeyBundle.maxSauces) return true;
+    if (isSauce) {
+      // Check if this serving size is allowed in the bundle
+      if (turkeyBundle.allowedSaucesServingSize && servingSize !== turkeyBundle.allowedSaucesServingSize) {
+        return false; // Only the specified serving size can be included
+      }
+
+      return bundleCounts.sauces < turkeyBundle.maxSauces;
+    }
 
     return false;
   };
@@ -359,14 +394,18 @@ const MenuItemsGrid: React.FC<MenuItemsGridProps> = ({
           <div className="bundle-info-content">
             <h4>🎉 Turkey Bundle Active (AED {turkeyBundle.price})</h4>
             <p>
-              {turkeyBundle.size === 4 ? (
+              {turkeyBundle.noMixing && turkeyBundle.size === 8 ? (
+                <>
+                  Choose <strong>2 large side dishes (For 8 people)</strong> and <strong>1 large sauce</strong> included in your package.
+                </>
+              ) : turkeyBundle.size === 4 ? (
                 <>
                   Choose <strong>either</strong> 2 side dishes for 4 people <strong>OR</strong> 1 side dish for 8 people + 1 sauce included in your package.
                   {bundleCounts.has4ppl && <> (Currently selecting 4-person sides)</>}
                   {bundleCounts.has8ppl && <> (Currently selecting 8-person sides)</>}
                 </>
               ) : (
-                <>Select sides worth 4 portions (1 side for 8ppl = 2 portions, 1 side for 4ppl = 1 portion) and 1 sauce included in your package.</>
+                <>Select sides worth {turkeyBundle.maxPortions} portions (1 side for 8ppl = 2 portions, 1 side for 4ppl = 1 portion) and 1 sauce included in your package.</>
               )}
               {' '}
               ({bundleCounts.portions}/{turkeyBundle.maxPortions} portions used, {bundleCounts.sauces}/{turkeyBundle.maxSauces} sauce selected)

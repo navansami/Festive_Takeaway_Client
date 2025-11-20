@@ -43,6 +43,8 @@ const OrderForm: React.FC = () => {
     PaymentMethod.CARD
   );
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [discountPercentage, setDiscountPercentage] = useState<number>(0);
+  const [discountName, setDiscountName] = useState<string>('');
 
   useEffect(() => {
     fetchMenuItems();
@@ -77,6 +79,8 @@ const OrderForm: React.FC = () => {
       setCollectionDate(order.collectionDate.split('T')[0]);
       setCollectionTime(order.collectionTime);
       setPaymentMethod(order.paymentMethod);
+      setDiscountPercentage(order.discountPercentage || 0);
+      setDiscountName(order.discountName || '');
 
       // Fix: Extract menuItem ID from populated menuItem object
       const items = order.items.map((item: any) => ({
@@ -152,8 +156,19 @@ const OrderForm: React.FC = () => {
     setOrderItems(newItems);
   };
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return orderItems.reduce((sum, item) => sum + item.totalPrice, 0);
+  };
+
+  const calculateDiscountAmount = () => {
+    const subtotal = calculateSubtotal();
+    return Math.round((subtotal * discountPercentage / 100) * 100) / 100;
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const discount = calculateDiscountAmount();
+    return subtotal - discount;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,7 +200,8 @@ const OrderForm: React.FC = () => {
           status: item.status,
           notes: item.notes
         })),
-        totalAmount: calculateTotal(),
+        discountPercentage: discountPercentage || 0,
+        discountName: discountPercentage > 0 ? discountName : undefined,
         collectionDate,
         collectionTime,
         paymentMethod,
@@ -493,8 +509,43 @@ const OrderForm: React.FC = () => {
             <div className="order-summary">
               <div className="summary-row">
                 <span>Subtotal ({orderItems.length} items)</span>
-                <span className="summary-amount">AED {calculateTotal().toFixed(2)}</span>
+                <span className="summary-amount">AED {calculateSubtotal().toFixed(2)}</span>
               </div>
+
+              <div className="discount-section">
+                <div className="form-row">
+                  <div className="form-group flex-1">
+                    <label>Discount (%)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      value={discountPercentage}
+                      onChange={(e) => setDiscountPercentage(parseFloat(e.target.value) || 0)}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="form-group flex-2">
+                    <label>Discount Reason</label>
+                    <input
+                      type="text"
+                      value={discountName}
+                      onChange={(e) => setDiscountName(e.target.value)}
+                      placeholder="e.g., VIP Customer, Holiday Promotion"
+                      disabled={discountPercentage === 0}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {discountPercentage > 0 && (
+                <div className="summary-row discount-row">
+                  <span>Discount ({discountPercentage}%{discountName ? ` - ${discountName}` : ''})</span>
+                  <span className="summary-amount discount">-AED {calculateDiscountAmount().toFixed(2)}</span>
+                </div>
+              )}
+
               <div className="summary-row total">
                 <span>Total Amount</span>
                 <span className="summary-amount">AED {calculateTotal().toFixed(2)}</span>

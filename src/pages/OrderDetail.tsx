@@ -354,6 +354,19 @@ const OrderDetail: React.FC = () => {
               </div>
               <div className="payment-amounts">
                 <div className="amount-row">
+                  <span>Subtotal:</span>
+                  <span>AED {order.subtotalAmount.toFixed(2)}</span>
+                </div>
+                {order.discountPercentage && order.discountPercentage > 0 && (
+                  <div className="amount-row discount">
+                    <span>
+                      Discount ({order.discountPercentage}%)
+                      {order.discountName && <><br /><small>{order.discountName}</small></>}
+                    </span>
+                    <span className="discount-amount">-AED {order.discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="amount-row total">
                   <span>Total Amount:</span>
                   <strong>AED {order.totalAmount.toFixed(2)}</strong>
                 </div>

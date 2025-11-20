@@ -75,6 +75,19 @@ export interface BundleConfig {
   }[];
 }
 
+export interface PackageConstraints {
+  servingSize: string;
+  allowedSides?: {
+    maxCount: number;
+    servingSize: string;
+    categories: string[];
+  };
+  allowedSauces?: {
+    maxCount: number;
+    servingSize: string;
+  };
+}
+
 export interface MenuItem {
   _id: string;
   name: string;
@@ -87,6 +100,7 @@ export interface MenuItem {
   allergens?: string[];
   isAvailable: boolean;
   bundleConfig?: BundleConfig[];
+  packageConstraints?: PackageConstraints[];
   createdAt: string;
   updatedAt: string;
 }
@@ -157,7 +171,11 @@ export interface Order {
     phone?: string;
   };
   items: OrderItem[];
-  totalAmount: number;
+  subtotalAmount: number; // Amount before discount
+  discountPercentage?: number; // Discount percentage (e.g., 20 for 20%)
+  discountName?: string; // Name/reason for the discount
+  discountAmount: number; // Calculated discount amount
+  totalAmount: number; // Final amount after discount
   collectionDate: string;
   collectionTime: string;
   status: OrderStatus;

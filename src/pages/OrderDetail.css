@@ -211,6 +211,27 @@
   color: var(--color-black);
 }
 
+.amount-row.discount {
+  color: #dc2626;
+}
+
+.amount-row.discount small {
+  color: #991b1b;
+  font-size: 0.75rem;
+}
+
+.amount-row.discount .discount-amount {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.amount-row.total {
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--color-border);
+  font-weight: 600;
+}
+
 .amount-row.balance {
   margin-top: var(--spacing-sm);
   padding-top: var(--spacing-sm);

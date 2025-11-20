@@ -264,6 +264,24 @@
   color: #047857;
 }
 
+/* Discount Section */
+.discount-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #d1fae5;
+}
+
+.summary-row.discount-row {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.summary-row.discount-row .summary-amount {
+  color: #dc2626;
+}
+
 /* Buttons */
 .btn-primary,
 .btn-secondary {
