@@ -467,6 +467,29 @@
   font-size: 0.875rem;
 }
 
+/* Order Tooltip Overlay */
+.tooltip-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: overlayFadeIn 0.2s ease-out;
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Order Tooltip - Flat Design */
 .order-tooltip {
   background: var(--color-white);
@@ -477,16 +500,21 @@
   max-height: calc(100vh - 40px);
   overflow: visible;
   animation: tooltipFadeIn 0.15s ease-out;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.15),
+    0 4px 10px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  pointer-events: auto;
 }
 
 @keyframes tooltipFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-10px);
+    transform: scale(0.95) translateY(-10px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -532,8 +560,27 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-lg);
   padding: var(--spacing-md);
-  max-height: calc(100vh - 100px);
+  max-height: calc(100vh - 80px);
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tooltip-content-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tooltip-content-grid::-webkit-scrollbar-track {
+  background: var(--color-grey-100);
+  border-radius: 3px;
+}
+
+.tooltip-content-grid::-webkit-scrollbar-thumb {
+  background: var(--color-grey-400);
+  border-radius: 3px;
+}
+
+.tooltip-content-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--color-grey-500);
 }
 
 .tooltip-column {
@@ -710,11 +757,13 @@
 @media (max-width: 767px) {
   .order-tooltip {
     width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
   }
 
   .tooltip-content-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
+    max-height: calc(100vh - 60px);
   }
 
   .tooltip-column-left {
@@ -726,6 +775,10 @@
 
   .tooltip-column-right {
     padding-left: 0;
+  }
+
+  .tooltip-overlay {
+    background-color: rgba(0, 0, 0, 0.4);
   }
 }
 

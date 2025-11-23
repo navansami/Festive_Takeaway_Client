@@ -135,24 +135,41 @@ const Orders: React.FC = () => {
 
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
     const tooltipWidth = 650; // Width of tooltip (updated for 2-column layout)
+    const tooltipHeight = 400; // Estimated height of tooltip
+    const padding = 10;
 
-    // Position tooltip to the left of the order number
-    let xPosition = rect.left - tooltipWidth - 10;
+    // Calculate horizontal position
+    let xPosition = rect.left - tooltipWidth - padding;
 
     // If not enough space on the left, position to the right
-    if (xPosition < 10) {
-      xPosition = rect.right + 10; // Position to the right of order number
+    if (xPosition < padding) {
+      xPosition = rect.right + padding;
     }
 
     // If still goes off screen right, adjust
-    if (xPosition + tooltipWidth > viewportWidth - 10) {
-      xPosition = viewportWidth - tooltipWidth - 10;
+    if (xPosition + tooltipWidth > viewportWidth - padding) {
+      xPosition = viewportWidth - tooltipWidth - padding;
     }
 
+    // Ensure it doesn't go off the left edge
+    xPosition = Math.max(padding, xPosition);
+
+    // Calculate vertical position
+    let yPosition = rect.top;
+
+    // If tooltip would go below viewport, adjust upward
+    if (yPosition + tooltipHeight > viewportHeight - padding) {
+      yPosition = viewportHeight - tooltipHeight - padding;
+    }
+
+    // Ensure it doesn't go above viewport
+    yPosition = Math.max(padding, yPosition);
+
     setTooltipPosition({
-      x: Math.max(10, xPosition),
-      y: rect.top
+      x: xPosition,
+      y: yPosition
     });
     setHoveredOrder(orderId);
   };
@@ -161,7 +178,7 @@ const Orders: React.FC = () => {
     // Delay hiding to allow mouse to move to tooltip
     hideTimeoutRef.current = setTimeout(() => {
       setHoveredOrder(null);
-    }, 100);
+    }, 200);
   };
 
   const handleTooltipEnter = () => {
@@ -402,8 +419,14 @@ const Orders: React.FC = () => {
                     <td
                       className="order-number clickable"
                       onClick={() => handleCopyToClipboard(order)}
-                      onMouseEnter={(e) => handleOrderNumberHover(order._id, e)}
-                      onMouseLeave={handleRowLeave}
+                      onMouseEnter={(e) => {
+                        e.stopPropagation();
+                        handleOrderNumberHover(order._id, e);
+                      }}
+                      onMouseLeave={(e) => {
+                        e.stopPropagation();
+                        handleRowLeave();
+                      }}
                       title="Hover to preview | Click to copy order details"
                     >
                       {order.orderNumber}
@@ -465,18 +488,26 @@ const Orders: React.FC = () => {
 
       {/* Order Details Tooltip */}
       {hoveredOrder && (
-        <div
-          ref={tooltipRef}
-          className="order-tooltip"
-          style={{
-            position: 'fixed',
-            left: `${tooltipPosition.x}px`,
-            top: `${tooltipPosition.y}px`,
-            zIndex: 1000,
-          }}
-          onMouseEnter={handleTooltipEnter}
-          onMouseLeave={handleTooltipLeave}
-        >
+        <>
+          <div className="tooltip-overlay" />
+          <div
+            ref={tooltipRef}
+            className="order-tooltip"
+            style={{
+              position: 'fixed',
+              left: `${tooltipPosition.x}px`,
+              top: `${tooltipPosition.y}px`,
+              zIndex: 1001,
+            }}
+            onMouseEnter={(e) => {
+              e.stopPropagation();
+              handleTooltipEnter();
+            }}
+            onMouseLeave={(e) => {
+              e.stopPropagation();
+              handleTooltipLeave();
+            }}
+          >
           {(() => {
             const order = orders.find(o => o._id === hoveredOrder);
             if (!order) return null;
@@ -565,7 +596,8 @@ const Orders: React.FC = () => {
               </>
             );
           })()}
-        </div>
+          </div>
+        </>
       )}
 
       <OrderModal
