@@ -71,6 +71,10 @@
 
 .input-with-icon input {
   padding-left: 3rem;
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
 }
 
 .login-btn {
