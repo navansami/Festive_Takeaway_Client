@@ -146,8 +146,8 @@ const OrderDetailNew: React.FC = () => {
     }
   };
 
-  const handleDeletePayment = async (paymentId: string) => {
-    if (!id) return;
+  const handleDeletePayment = async (paymentId?: string) => {
+    if (!id || !paymentId) return;
 
     if (!window.confirm('Are you sure you want to delete this payment record? This action cannot be undone.')) {
       return;
