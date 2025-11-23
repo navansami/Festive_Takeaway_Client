@@ -126,7 +126,7 @@ const Orders: React.FC = () => {
     }
   };
 
-  const handleRowHover = (orderId: string, event: React.MouseEvent<HTMLTableRowElement>) => {
+  const handleOrderNumberHover = (orderId: string, event: React.MouseEvent<HTMLTableCellElement>) => {
     // Clear any pending hide timeout
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
@@ -135,14 +135,14 @@ const Orders: React.FC = () => {
 
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
-    const tooltipWidth = 350; // Width of tooltip
+    const tooltipWidth = 650; // Width of tooltip (updated for 2-column layout)
 
     // Position tooltip to the left of the order number
     let xPosition = rect.left - tooltipWidth - 10;
 
     // If not enough space on the left, position to the right
     if (xPosition < 10) {
-      xPosition = rect.left + 150; // Position near order number column
+      xPosition = rect.right + 10; // Position to the right of order number
     }
 
     // If still goes off screen right, adjust
@@ -223,7 +223,7 @@ const Orders: React.FC = () => {
             <Search className="search-icon" size={18} />
             <input
               type="text"
-              placeholder="Search by order number, name, or email..."
+              placeholder="Search orders..."
               value={filters.search}
               onChange={(e) =>
                 setFilters({ ...filters, search: e.target.value })
@@ -398,13 +398,13 @@ const Orders: React.FC = () => {
                 {filteredOrders.map((order) => (
                   <tr
                     key={order._id}
-                    onMouseEnter={(e) => handleRowHover(order._id, e)}
-                    onMouseLeave={handleRowLeave}
                   >
                     <td
                       className="order-number clickable"
                       onClick={() => handleCopyToClipboard(order)}
-                      title="Click to copy order details"
+                      onMouseEnter={(e) => handleOrderNumberHover(order._id, e)}
+                      onMouseLeave={handleRowLeave}
+                      title="Hover to preview | Click to copy order details"
                     >
                       {order.orderNumber}
                     </td>
@@ -491,36 +491,75 @@ const Orders: React.FC = () => {
                     </span>
                   )}
                 </div>
-                <div className="tooltip-content">
-                  <div className="tooltip-section">
-                    <Calendar size={14} />
-                    <span>
-                      {formatDate(order.collectionDate)} at {order.collectionTime}
-                    </span>
-                  </div>
-                  <div className="tooltip-divider"></div>
-                  <div className="tooltip-items">
-                    {order.items.map((item, idx) => (
-                      <div key={idx} className="tooltip-item">
-                        <div className="tooltip-item-details">
-                          <span className="tooltip-item-qty">{item.quantity}x</span>
-                          <div className="tooltip-item-info">
-                            <span className="tooltip-item-name">{item.name}</span>
-                            <span className="tooltip-item-serving">{item.servingSize}</span>
-                          </div>
-                        </div>
-                        <span className={`tooltip-item-price ${item.isIncludedInBundle ? 'included' : ''}`}>
-                          {item.isIncludedInBundle
-                            ? 'Included'
-                            : `AED ${item.price.toFixed(2)}`}
+                <div className="tooltip-content-grid">
+                  <div className="tooltip-column tooltip-column-left">
+                    <div className="tooltip-section">
+                      <h5 className="tooltip-section-title">Guest Details</h5>
+                      <div className="tooltip-info-row">
+                        <span className="tooltip-label">Name:</span>
+                        <span className="tooltip-value">{order.guestDetails.name}</span>
+                      </div>
+                      <div className="tooltip-info-row">
+                        <span className="tooltip-label">Email:</span>
+                        <span className="tooltip-value">{order.guestDetails.email}</span>
+                      </div>
+                    </div>
+
+                    <div className="tooltip-divider"></div>
+
+                    <div className="tooltip-section">
+                      <h5 className="tooltip-section-title">Collection</h5>
+                      <div className="tooltip-section-with-icon">
+                        <Calendar size={14} />
+                        <span>
+                          {formatDate(order.collectionDate)} at {order.collectionTime}
                         </span>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="tooltip-divider"></div>
+
+                    <div className="tooltip-section">
+                      <h5 className="tooltip-section-title">Payment</h5>
+                      <div className="tooltip-info-row">
+                        <span className="tooltip-label">Status:</span>
+                        <span className={`badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
+                          {order.paymentStatus}
+                        </span>
+                      </div>
+                      <div className="tooltip-info-row">
+                        <span className="tooltip-label">Total:</span>
+                        <span className="tooltip-value-highlight">AED {order.totalAmount.toFixed(2)}</span>
+                      </div>
+                      <div className="tooltip-info-row">
+                        <span className="tooltip-label">Paid:</span>
+                        <span className="tooltip-value">AED {order.totalPaid.toFixed(2)}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="tooltip-divider"></div>
-                  <div className="tooltip-total">
-                    <span>Total</span>
-                    <span className="tooltip-total-amount">AED {order.totalAmount.toFixed(2)}</span>
+
+                  <div className="tooltip-column tooltip-column-right">
+                    <div className="tooltip-section">
+                      <h5 className="tooltip-section-title">Order Items ({order.items.length})</h5>
+                      <div className="tooltip-items">
+                        {order.items.map((item, idx) => (
+                          <div key={idx} className="tooltip-item">
+                            <div className="tooltip-item-details">
+                              <span className="tooltip-item-qty">{item.quantity}x</span>
+                              <div className="tooltip-item-info">
+                                <span className="tooltip-item-name">{item.name}</span>
+                                <span className="tooltip-item-serving">{item.servingSize}</span>
+                              </div>
+                            </div>
+                            <span className={`tooltip-item-price ${item.isIncludedInBundle ? 'included' : ''}`}>
+                              {item.isIncludedInBundle
+                                ? 'Included'
+                                : `AED ${item.price.toFixed(2)}`}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>
