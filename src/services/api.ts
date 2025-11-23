@@ -97,6 +97,19 @@ class ApiService {
     });
   }
 
+  async updatePayment(orderId: string, paymentId: string, payment: any) {
+    return this.request(`/orders/${orderId}/payments/${paymentId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payment),
+    });
+  }
+
+  async deletePayment(orderId: string, paymentId: string) {
+    return this.request(`/orders/${orderId}/payments/${paymentId}`, {
+      method: 'DELETE',
+    });
+  }
+
   async updateOrderItem(orderId: string, itemId: string, data: any) {
     return this.request(`/orders/${orderId}/items/${itemId}`, {
       method: 'PATCH',

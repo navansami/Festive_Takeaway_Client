@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import OrderForm from './pages/OrderForm';
-import OrderDetail from './pages/OrderDetail';
+import OrderDetail from './pages/OrderDetailNew';
 import Guests from './pages/Guests';
 import GuestDetail from './pages/GuestDetail';
 import MenuItems from './pages/MenuItems';

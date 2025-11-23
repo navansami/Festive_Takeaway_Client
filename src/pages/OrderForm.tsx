@@ -4,7 +4,7 @@ import type { MenuItem, OrderItem } from '../types';
 import { PaymentMethod } from '../types';
 import api from '../services/api';
 import GuestSearch from '../components/GuestSearch';
-import { Plus, X, ShoppingCart } from 'lucide-react';
+import { X, ShoppingCart, Plus, Trash2, Calendar, Clock, CreditCard, User, MapPin, Percent, Tag } from 'lucide-react';
 import './OrderForm.css';
 
 const OrderForm: React.FC = () => {
@@ -69,7 +69,6 @@ const OrderForm: React.FC = () => {
       const response = await api.getOrderById(id) as { order: any };
       const order = response.order;
 
-      // Set guest details
       setGuestDetails(order.guestDetails);
       if (order.guest) {
         setGuestId(typeof order.guest === 'string' ? order.guest : order.guest._id);
@@ -82,7 +81,6 @@ const OrderForm: React.FC = () => {
       setDiscountPercentage(order.discountPercentage || 0);
       setDiscountName(order.discountName || '');
 
-      // Fix: Extract menuItem ID from populated menuItem object
       const items = order.items.map((item: any) => ({
         ...item,
         menuItem: typeof item.menuItem === 'string' ? item.menuItem : item.menuItem._id,
@@ -149,7 +147,6 @@ const OrderForm: React.FC = () => {
       newItems[index] = { ...newItems[index], [field]: value };
     }
 
-    // Recalculate total price
     newItems[index].totalPrice =
       newItems[index].price * newItems[index].quantity;
 
@@ -225,346 +222,420 @@ const OrderForm: React.FC = () => {
     return menuItems.find((item) => item._id === menuItemId);
   };
 
+  const handleClose = () => {
+    navigate('/dashboard/orders');
+  };
+
   return (
-    <div className="order-form-page">
-      <div className="page-header">
-        <div>
-          <h1>{isEditMode ? 'Edit Order' : 'New Order'}</h1>
-          <p>
-            {isEditMode
-              ? 'Update order details and items'
-              : 'Create a new festive takeaway order'}
-          </p>
-        </div>
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
-
-      <form onSubmit={handleSubmit}>
-        <div className="form-section card">
-          <h3>Guest Information</h3>
-          <GuestSearch
-            selectedGuest={guestDetails.name ? guestDetails : null}
-            onSelectGuest={(guest) => {
-              setGuestDetails(guest);
-              setGuestId(guest._id);
-            }}
-            onAddNew={() => {
-              setGuestDetails({
-                name: '',
-                email: '',
-                phone: '',
-                address: ''
-              });
-              setGuestId(undefined);
-            }}
-          />
-        </div>
-
-        <div className="form-section card">
-          <h3>Collection Person (if different from guest)</h3>
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="collectionName">Name</label>
-              <input
-                type="text"
-                id="collectionName"
-                value={collectionPerson.name}
-                onChange={(e) =>
-                  setCollectionPerson({
-                    ...collectionPerson,
-                    name: e.target.value,
-                  })
-                }
-                placeholder="Leave blank if same as guest"
-              />
+    <div className="order-form-modal-overlay">
+      <div className="order-form-modal">
+        {/* Header */}
+        <div className="order-form-header">
+          <div className="header-content">
+            <div className="header-title-group">
+              <h1>{isEditMode ? 'Edit Order' : 'Create New Order'}</h1>
+              <p>
+                {isEditMode
+                  ? 'Update order details and items'
+                  : 'Complete the form below to create a new takeaway order'}
+              </p>
             </div>
-
-            <div className="form-group">
-              <label htmlFor="collectionEmail">Email</label>
-              <input
-                type="email"
-                id="collectionEmail"
-                value={collectionPerson.email}
-                onChange={(e) =>
-                  setCollectionPerson({
-                    ...collectionPerson,
-                    email: e.target.value,
-                  })
-                }
-                placeholder="Optional"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="collectionPhone">Phone</label>
-              <input
-                type="tel"
-                id="collectionPhone"
-                value={collectionPerson.phone}
-                onChange={(e) =>
-                  setCollectionPerson({
-                    ...collectionPerson,
-                    phone: e.target.value,
-                  })
-                }
-                placeholder="Optional"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="form-section card">
-          <h3>Collection Details</h3>
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="collectionDate">
-                Collection Date <span className="required">*</span>
-              </label>
-              <input
-                type="date"
-                id="collectionDate"
-                value={collectionDate}
-                onChange={(e) => setCollectionDate(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="collectionTime">
-                Collection Time <span className="required">*</span>
-              </label>
-              <input
-                type="time"
-                id="collectionTime"
-                value={collectionTime}
-                onChange={(e) => setCollectionTime(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="paymentMethod">
-                Payment Method <span className="required">*</span>
-              </label>
-              <select
-                id="paymentMethod"
-                value={paymentMethod}
-                onChange={(e) =>
-                  setPaymentMethod(e.target.value as PaymentMethod)
-                }
-                required
-              >
-                <option value={PaymentMethod.CARD}>Card</option>
-                <option value={PaymentMethod.CASH}>Cash</option>
-                <option value={PaymentMethod.BANK_TRANSFER}>
-                  Bank Transfer
-                </option>
-                <option value={PaymentMethod.OTHER}>Other</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="form-section card">
-          <div className="section-header">
-            <h3>
-              <ShoppingCart size={20} />
-              Order Items
-            </h3>
-            <button
-              type="button"
-              className="btn-primary btn-sm"
-              onClick={addItem}
-            >
-              <Plus size={16} />
-              Add Item
+            <button className="close-button" onClick={handleClose} type="button">
+              <X size={24} />
             </button>
           </div>
+        </div>
 
-          {orderItems.length === 0 ? (
-            <div className="empty-state">
-              <ShoppingCart size={48} className="empty-icon" />
-              <p>No items added yet</p>
-              <button
-                type="button"
-                className="btn-primary"
-                onClick={addItem}
-              >
-                <Plus size={18} />
-                Add First Item
-              </button>
+        {/* Content */}
+        <div className="order-form-content">
+          {error && (
+            <div className="error-banner">
+              <span>{error}</span>
             </div>
-          ) : (
-            <div className="order-items">
-              {orderItems.map((item, index) => {
-                const menuItem = getMenuItemById(item.menuItem);
-                return (
-                  <div key={index} className="item-card">
-                    <div className="item-card-header">
-                      <span className="item-number">#{index + 1}</span>
-                      <button
-                        type="button"
-                        className="btn-icon-danger"
-                        onClick={() => removeItem(index)}
-                        title="Remove item"
+          )}
+
+          <form onSubmit={handleSubmit} id="order-form">
+            {/* Guest Information */}
+            <section className="form-section">
+              <div className="section-title">
+                <div className="section-icon">
+                  <User size={20} />
+                </div>
+                <div>
+                  <h2>Guest Information</h2>
+                  <p>Search for existing guest or add new details</p>
+                </div>
+              </div>
+              <div className="section-content">
+                <GuestSearch
+                  selectedGuest={guestDetails.name ? guestDetails : null}
+                  onSelectGuest={(guest) => {
+                    setGuestDetails(guest);
+                    setGuestId(guest._id);
+                  }}
+                  onAddNew={() => {
+                    setGuestDetails({
+                      name: '',
+                      email: '',
+                      phone: '',
+                      address: ''
+                    });
+                    setGuestId(undefined);
+                  }}
+                />
+              </div>
+            </section>
+
+            {/* Collection Person */}
+            <section className="form-section">
+              <div className="section-title">
+                <div className="section-icon">
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <h2>Collection Person</h2>
+                  <p>If different from guest (optional)</p>
+                </div>
+              </div>
+              <div className="section-content">
+                <div className="input-grid-3">
+                  <div className="input-group">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      value={collectionPerson.name}
+                      onChange={(e) =>
+                        setCollectionPerson({
+                          ...collectionPerson,
+                          name: e.target.value,
+                        })
+                      }
+                      placeholder="Leave blank if same as guest"
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      value={collectionPerson.email}
+                      onChange={(e) =>
+                        setCollectionPerson({
+                          ...collectionPerson,
+                          email: e.target.value,
+                        })
+                      }
+                      placeholder="Optional"
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label>Phone</label>
+                    <input
+                      type="tel"
+                      value={collectionPerson.phone}
+                      onChange={(e) =>
+                        setCollectionPerson({
+                          ...collectionPerson,
+                          phone: e.target.value,
+                        })
+                      }
+                      placeholder="Optional"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Collection & Payment */}
+            <section className="form-section">
+              <div className="section-title">
+                <div className="section-icon">
+                  <Calendar size={20} />
+                </div>
+                <div>
+                  <h2>Collection & Payment</h2>
+                  <p>When and how will this order be collected</p>
+                </div>
+              </div>
+              <div className="section-content">
+                <div className="input-grid-3">
+                  <div className="input-group">
+                    <label>
+                      Collection Date <span className="required">*</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <Calendar size={18} />
+                      <input
+                        type="date"
+                        value={collectionDate}
+                        onChange={(e) => setCollectionDate(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label>
+                      Collection Time <span className="required">*</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <Clock size={18} />
+                      <input
+                        type="time"
+                        value={collectionTime}
+                        onChange={(e) => setCollectionTime(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label>
+                      Payment Method <span className="required">*</span>
+                    </label>
+                    <div className="input-with-icon">
+                      <CreditCard size={18} />
+                      <select
+                        value={paymentMethod}
+                        onChange={(e) =>
+                          setPaymentMethod(e.target.value as PaymentMethod)
+                        }
+                        required
                       >
-                        <X size={18} />
-                      </button>
+                        <option value={PaymentMethod.CARD}>Card</option>
+                        <option value={PaymentMethod.CASH}>Cash</option>
+                        <option value={PaymentMethod.BANK_TRANSFER}>
+                          Bank Transfer
+                        </option>
+                        <option value={PaymentMethod.OTHER}>Other</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Order Items */}
+            <section className="form-section">
+              <div className="section-title">
+                <div className="section-icon">
+                  <ShoppingCart size={20} />
+                </div>
+                <div>
+                  <h2>Order Items</h2>
+                  <p>Add items to this order</p>
+                </div>
+                <button
+                  type="button"
+                  className="add-item-btn"
+                  onClick={addItem}
+                >
+                  <Plus size={18} />
+                  Add Item
+                </button>
+              </div>
+
+              <div className="section-content">
+                {orderItems.length === 0 ? (
+                  <div className="empty-items">
+                    <ShoppingCart size={64} strokeWidth={1} />
+                    <h3>No items added yet</h3>
+                    <p>Click "Add Item" to start building the order</p>
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      onClick={addItem}
+                    >
+                      <Plus size={18} />
+                      Add First Item
+                    </button>
+                  </div>
+                ) : (
+                  <div className="items-list">
+                    {orderItems.map((item, index) => {
+                      const menuItem = getMenuItemById(item.menuItem);
+                      return (
+                        <div key={index} className="item-row">
+                          <div className="item-number">
+                            <span>{index + 1}</span>
+                          </div>
+
+                          <div className="item-fields">
+                            <div className="item-row-top">
+                              <div className="input-group flex-2">
+                                <label>
+                                  Menu Item <span className="required">*</span>
+                                </label>
+                                <select
+                                  value={item.menuItem}
+                                  onChange={(e) =>
+                                    updateItem(index, 'menuItem', e.target.value)
+                                  }
+                                  required
+                                >
+                                  <option value="">Select an item...</option>
+                                  {menuItems.map((mi) => (
+                                    <option key={mi._id} value={mi._id}>
+                                      {mi.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+
+                              {item.menuItem && menuItem && (
+                                <div className="input-group flex-2">
+                                  <label>
+                                    Serving Size <span className="required">*</span>
+                                  </label>
+                                  <select
+                                    value={item.servingSize}
+                                    onChange={(e) =>
+                                      updateItem(index, 'servingSize', e.target.value)
+                                    }
+                                    required
+                                  >
+                                    <option value="">Select size...</option>
+                                    {menuItem.pricing.map((pricing) => (
+                                      <option
+                                        key={pricing.servingSize}
+                                        value={pricing.servingSize}
+                                      >
+                                        {pricing.servingSize} - AED {pricing.price.toFixed(2)}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              )}
+
+                              <div className="input-group flex-1">
+                                <label>
+                                  Quantity <span className="required">*</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={item.quantity}
+                                  onChange={(e) =>
+                                    updateItem(
+                                      index,
+                                      'quantity',
+                                      parseInt(e.target.value) || 1
+                                    )
+                                  }
+                                  required
+                                />
+                              </div>
+
+                              <div className="item-total">
+                                <label>Total</label>
+                                <div className="total-price">
+                                  AED {item.totalPrice.toFixed(2)}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="input-group">
+                              <label>Special Instructions</label>
+                              <input
+                                type="text"
+                                value={item.notes || ''}
+                                onChange={(e) =>
+                                  updateItem(index, 'notes', e.target.value)
+                                }
+                                placeholder="e.g., No salt, extra gravy..."
+                              />
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="remove-item-btn"
+                            onClick={() => removeItem(index)}
+                            title="Remove item"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Order Summary */}
+                {orderItems.length > 0 && (
+                  <div className="order-summary-box">
+                    <div className="summary-header">
+                      <h3>Order Summary</h3>
+                      <span className="item-count">{orderItems.length} {orderItems.length === 1 ? 'item' : 'items'}</span>
                     </div>
 
-                    <div className="item-card-body">
-                      <div className="form-row">
-                        <div className="form-group flex-2">
-                          <label>
-                            Menu Item <span className="required">*</span>
-                          </label>
-                          <select
-                            value={item.menuItem}
-                            onChange={(e) =>
-                              updateItem(index, 'menuItem', e.target.value)
-                            }
-                            required
-                          >
-                            <option value="">Select an item...</option>
-                            {menuItems.map((mi) => (
-                              <option key={mi._id} value={mi._id}>
-                                {mi.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
+                    <div className="summary-rows">
+                      <div className="summary-row">
+                        <span>Subtotal</span>
+                        <span className="amount">AED {calculateSubtotal().toFixed(2)}</span>
+                      </div>
 
-                        {item.menuItem && menuItem && (
-                          <div className="form-group flex-2">
-                            <label>
-                              Serving Size <span className="required">*</span>
-                            </label>
-                            <select
-                              value={item.servingSize}
-                              onChange={(e) =>
-                                updateItem(index, 'servingSize', e.target.value)
-                              }
-                              required
-                            >
-                              <option value="">Select size...</option>
-                              {menuItem.pricing.map((pricing) => (
-                                <option
-                                  key={pricing.servingSize}
-                                  value={pricing.servingSize}
-                                >
-                                  {pricing.servingSize} - AED {pricing.price.toFixed(2)}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-
-                        <div className="form-group flex-1">
+                      {/* Discount Section */}
+                      <div className="discount-inputs">
+                        <div className="input-group flex-1">
                           <label>
-                            Qty <span className="required">*</span>
+                            <Percent size={14} />
+                            Discount Percentage
                           </label>
                           <input
                             type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(e) =>
-                              updateItem(
-                                index,
-                                'quantity',
-                                parseInt(e.target.value) || 1
-                              )
-                            }
-                            required
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value={discountPercentage}
+                            onChange={(e) => setDiscountPercentage(parseFloat(e.target.value) || 0)}
+                            placeholder="0"
                           />
                         </div>
-
-                        <div className="form-group flex-1">
-                          <label>Total</label>
-                          <div className="price-display">
-                            AED {item.totalPrice.toFixed(2)}
-                          </div>
+                        <div className="input-group flex-2">
+                          <label>
+                            <Tag size={14} />
+                            Discount Reason
+                          </label>
+                          <input
+                            type="text"
+                            value={discountName}
+                            onChange={(e) => setDiscountName(e.target.value)}
+                            placeholder="e.g., VIP Customer, Holiday Promotion"
+                            disabled={discountPercentage === 0}
+                          />
                         </div>
                       </div>
 
-                      <div className="form-group">
-                        <label>Special Instructions</label>
-                        <input
-                          type="text"
-                          value={item.notes || ''}
-                          onChange={(e) =>
-                            updateItem(index, 'notes', e.target.value)
-                          }
-                          placeholder="e.g., No salt, extra gravy..."
-                        />
+                      {discountPercentage > 0 && (
+                        <div className="summary-row discount">
+                          <span>Discount ({discountPercentage}%{discountName ? ` - ${discountName}` : ''})</span>
+                          <span className="amount">-AED {calculateDiscountAmount().toFixed(2)}</span>
+                        </div>
+                      )}
+
+                      <div className="summary-row total">
+                        <span>Total Amount</span>
+                        <span className="amount">AED {calculateTotal().toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-
-          {orderItems.length > 0 && (
-            <div className="order-summary">
-              <div className="summary-row">
-                <span>Subtotal ({orderItems.length} items)</span>
-                <span className="summary-amount">AED {calculateSubtotal().toFixed(2)}</span>
+                )}
               </div>
-
-              <div className="discount-section">
-                <div className="form-row">
-                  <div className="form-group flex-1">
-                    <label>Discount (%)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      value={discountPercentage}
-                      onChange={(e) => setDiscountPercentage(parseFloat(e.target.value) || 0)}
-                      placeholder="0"
-                    />
-                  </div>
-                  <div className="form-group flex-2">
-                    <label>Discount Reason</label>
-                    <input
-                      type="text"
-                      value={discountName}
-                      onChange={(e) => setDiscountName(e.target.value)}
-                      placeholder="e.g., VIP Customer, Holiday Promotion"
-                      disabled={discountPercentage === 0}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {discountPercentage > 0 && (
-                <div className="summary-row discount-row">
-                  <span>Discount ({discountPercentage}%{discountName ? ` - ${discountName}` : ''})</span>
-                  <span className="summary-amount discount">-AED {calculateDiscountAmount().toFixed(2)}</span>
-                </div>
-              )}
-
-              <div className="summary-row total">
-                <span>Total Amount</span>
-                <span className="summary-amount">AED {calculateTotal().toFixed(2)}</span>
-              </div>
-            </div>
-          )}
+            </section>
+          </form>
         </div>
 
-        <div className="form-actions">
+        {/* Footer */}
+        <div className="order-form-footer">
           <button
             type="button"
             className="btn-secondary"
-            onClick={() => navigate('/dashboard/orders')}
+            onClick={handleClose}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="btn-primary"
+            form="order-form"
+            className="btn-submit"
             disabled={loading || orderItems.length === 0 || !guestDetails.name}
           >
             {loading
@@ -574,7 +645,7 @@ const OrderForm: React.FC = () => {
               : 'Create Order'}
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
