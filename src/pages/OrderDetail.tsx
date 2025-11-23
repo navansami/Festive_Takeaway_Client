@@ -355,7 +355,7 @@ const OrderDetail: React.FC = () => {
               <div className="payment-amounts">
                 <div className="amount-row">
                   <span>Subtotal:</span>
-                  <span>AED {order.subtotalAmount.toFixed(2)}</span>
+                  <span>AED {(order.subtotalAmount || order.totalAmount || 0).toFixed(2)}</span>
                 </div>
                 {order.discountPercentage && order.discountPercentage > 0 && (
                   <div className="amount-row discount">
@@ -363,23 +363,23 @@ const OrderDetail: React.FC = () => {
                       Discount ({order.discountPercentage}%)
                       {order.discountName && <><br /><small>{order.discountName}</small></>}
                     </span>
-                    <span className="discount-amount">-AED {order.discountAmount.toFixed(2)}</span>
+                    <span className="discount-amount">-AED {(order.discountAmount || 0).toFixed(2)}</span>
                   </div>
                 )}
                 <div className="amount-row total">
                   <span>Total Amount:</span>
-                  <strong>AED {order.totalAmount.toFixed(2)}</strong>
+                  <strong>AED {(order.totalAmount || 0).toFixed(2)}</strong>
                 </div>
                 <div className="amount-row">
                   <span>Total Paid:</span>
                   <strong className="paid">
-                    AED {order.totalPaid.toFixed(2)}
+                    AED {(order.totalPaid || 0).toFixed(2)}
                   </strong>
                 </div>
                 <div className="amount-row balance">
                   <span>Balance:</span>
                   <strong>
-                    AED {(order.totalAmount - order.totalPaid).toFixed(2)}
+                    AED {((order.totalAmount || 0) - (order.totalPaid || 0)).toFixed(2)}
                   </strong>
                 </div>
               </div>
