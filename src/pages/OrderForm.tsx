@@ -195,7 +195,8 @@ const OrderForm: React.FC = () => {
           price: item.price,
           totalPrice: item.totalPrice,
           status: item.status,
-          notes: item.notes
+          notes: item.notes,
+          isIncludedInBundle: item.isIncludedInBundle
         })),
         discountPercentage: discountPercentage || 0,
         discountName: discountPercentage > 0 ? discountName : undefined,
