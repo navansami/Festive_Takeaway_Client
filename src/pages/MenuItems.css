@@ -50,7 +50,7 @@
 
 .menu-item-header h3 {
   margin: 0 0 var(--spacing-xs) 0;
-  color: var(--color-black);
+  color: var(--color-text-primary);
   font-size: 1.25rem;
 }
 
@@ -125,7 +125,7 @@
 .pricing-section h4 {
   margin: 0 0 var(--spacing-md) 0;
   font-size: 1rem;
-  color: var(--color-black);
+  color: var(--color-text-primary);
 }
 
 /* Mobile First - Single column */
@@ -149,7 +149,7 @@
 .bundle-config-section h4 {
   margin: 0 0 var(--spacing-xs) 0;
   font-size: 1rem;
-  color: var(--color-black);
+  color: var(--color-text-primary);
 }
 
 .section-description {
@@ -179,7 +179,7 @@
 .bundle-config-header h5 {
   margin: 0;
   font-size: 0.938rem;
-  color: var(--color-black);
+  color: var(--color-text-primary);
 }
 
 .bundle-config-header button {
@@ -215,7 +215,7 @@
   margin: 0;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-black);
+  color: var(--color-text-primary);
 }
 
 /* Mobile First - Single column */

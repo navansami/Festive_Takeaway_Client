@@ -234,8 +234,7 @@ const Orders: React.FC = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      <div className="card">
-        <div className="filters">
+      <div className="filters">
           <div className="search-wrapper">
             <Search className="search-icon" size={18} />
             <input
@@ -314,12 +313,26 @@ const Orders: React.FC = () => {
             <p>No orders found</p>
           </div>
         ) : (
-          <div className="table-container">
-            {/* Mobile Card View */}
+          <div className="orders-grid">
             {filteredOrders.map((order) => (
-              <div key={order._id} className="order-card" onClick={() => navigate(`/dashboard/orders/${order._id}`)}>
+              <div key={order._id} className="order-card">
                 <div className="order-card-header">
-                  <h3 className="order-number">{order.orderNumber}</h3>
+                  <h3
+                    className="order-number"
+                    onClick={() => handleCopyToClipboard(order)}
+                    onMouseEnter={(e) => {
+                      e.stopPropagation();
+                      handleOrderNumberHover(order._id, e as any);
+                    }}
+                    onMouseLeave={(e) => {
+                      e.stopPropagation();
+                      handleRowLeave();
+                    }}
+                    title="Click to copy order details"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {order.orderNumber}
+                  </h3>
                   <span className={`badge ${getStatusBadgeClass(order.status)}`}>
                     {order.status.replace(/_/g, ' ')}
                   </span>
@@ -327,44 +340,46 @@ const Orders: React.FC = () => {
                 <div className="order-card-body">
                   <div className="order-card-section">
                     <p className="order-card-section-title">Customer</p>
-                    <div className="order-info-row">
-                      <span className="order-info-label">Name</span>
-                      <span className="order-info-value customer-name">{order.guestDetails.name}</span>
-                    </div>
-                    <div className="order-info-row">
-                      <span className="order-info-label">Email</span>
-                      <span className="order-info-value">{order.guestDetails.email}</span>
+                    <div className="customer-info">
+                      <strong>{order.guestDetails.name}</strong>
+                      <span>{order.guestDetails.email}</span>
                     </div>
                   </div>
 
                   <div className="order-card-section">
                     <p className="order-card-section-title">Collection</p>
                     <div className="order-info-row">
-                      <span className="order-info-label">Customer:</span>
+                      <span className="order-info-label">Date & Time</span>
                       <span className="order-info-value">
-                        {formatDate(order.collectionDate)} at {order.collectionTime}
+                        {formatDate(order.collectionDate)}
+                        <br />
+                        {order.collectionTime}
                       </span>
-                    </div>
-                    <div className="order-info-row">
-                      <span className="order-info-label">Items:</span>
-                      <span className="order-info-value">{order.items.length}</span>
                     </div>
                   </div>
 
                   <div className="order-card-section">
-                    <p className="order-card-section-title">Payment</p>
+                    <p className="order-card-section-title">Amount & Items</p>
                     <div className="order-info-row">
-                      <span className="order-info-label">Total:</span>
-                      <span className="order-info-value amount">AED {order.totalAmount.toFixed(2)}</span>
+                      <span className="order-info-label">Total</span>
+                      <span className="amount">AED {order.totalAmount.toFixed(2)}</span>
                     </div>
                     <div className="order-info-row">
-                      <span className="order-info-label">Status:</span>
-                      <span className="order-info-value">
-                        <span className={`badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
-                          {order.paymentStatus}
-                        </span>
-                        {' '}Paid: AED {order.totalPaid.toFixed(2)}
+                      <span className="order-info-label">Items</span>
+                      <span className="order-info-value">{order.items.length} item{order.items.length !== 1 ? 's' : ''}</span>
+                    </div>
+                  </div>
+
+                  <div className="order-card-section">
+                    <p className="order-card-section-title">Payment Status</p>
+                    <div className="order-info-row">
+                      <span className={`badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
+                        {order.paymentStatus}
                       </span>
+                    </div>
+                    <div className="order-info-row">
+                      <span className="order-info-label">Paid</span>
+                      <span className="order-info-value">AED {order.totalPaid.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -378,7 +393,7 @@ const Orders: React.FC = () => {
                     title="View order details"
                   >
                     <Eye size={16} />
-                    <span>View</span>
+                    <span>View Details</span>
                   </button>
                   {user?.role === UserRole.ADMIN && (
                     <button
@@ -396,95 +411,8 @@ const Orders: React.FC = () => {
                 </div>
               </div>
             ))}
-
-            {/* Desktop Table View */}
-            <table>
-              <thead>
-                <tr>
-                  <th>Order #</th>
-                  <th>Customer</th>
-                  <th>Collection Date</th>
-                  <th>Items</th>
-                  <th>Total</th>
-                  <th>Payment</th>
-                  <th>Status</th>
-                  <th className="actions-header">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order) => (
-                  <tr
-                    key={order._id}
-                  >
-                    <td
-                      className="order-number clickable"
-                      onClick={() => handleCopyToClipboard(order)}
-                      onMouseEnter={(e) => {
-                        e.stopPropagation();
-                        handleOrderNumberHover(order._id, e);
-                      }}
-                      onMouseLeave={(e) => {
-                        e.stopPropagation();
-                        handleRowLeave();
-                      }}
-                      title="Hover to preview | Click to copy order details"
-                    >
-                      {order.orderNumber}
-                    </td>
-                    <td>
-                      <div className="customer-info">
-                        <strong>{order.guestDetails.name}</strong>
-                        <span>{order.guestDetails.email}</span>
-                      </div>
-                    </td>
-                    <td>
-                      {formatDate(order.collectionDate)}
-                      <br />
-                      <small>{order.collectionTime}</small>
-                    </td>
-                    <td>{order.items.length}</td>
-                    <td className="amount">AED {order.totalAmount.toFixed(2)}</td>
-                    <td>
-                      <span className={`badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
-                        {order.paymentStatus}
-                      </span>
-                      <br />
-                      <small>Paid: AED {order.totalPaid.toFixed(2)}</small>
-                    </td>
-                    <td>
-                      <span className={`badge ${getStatusBadgeClass(order.status)}`}>
-                        {order.status.replace(/_/g, ' ')}
-                      </span>
-                    </td>
-                    <td className="actions-cell">
-                      <div className="action-buttons">
-                        <button
-                          className="btn-icon btn-icon-primary"
-                          type="button"
-                          onClick={() => navigate(`/dashboard/orders/${order._id}`)}
-                          title="View order details"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        {user?.role === UserRole.ADMIN && (
-                          <button
-                            className="btn-icon btn-icon-danger"
-                            type="button"
-                            onClick={() => handleDelete(order)}
-                            title="Delete order"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         )}
-      </div>
 
       {/* Order Details Tooltip */}
       {hoveredOrder && (

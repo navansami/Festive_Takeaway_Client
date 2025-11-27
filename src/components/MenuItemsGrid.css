@@ -10,10 +10,10 @@
 .category-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-text-primary);
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .menu-items-list {
@@ -30,15 +30,17 @@
 
 /* Flat Menu Item Card */
 .menu-item-card {
-  background-color: var(--color-white);
+  background: var(--gradient-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  transition: border-color var(--transition-fast);
+  transition: all var(--transition-base);
+  backdrop-filter: blur(12px);
 }
 
 .menu-item-card:hover {
-  border-color: var(--color-grey-300);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .menu-item-header {
@@ -55,23 +57,23 @@
 .menu-item-name {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-text-primary);
   margin: 0 0 0.25rem 0;
 }
 
 .menu-item-description {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--color-text-secondary);
   margin: 0.25rem 0;
   line-height: 1.4;
 }
 
 .menu-item-allergens {
   font-size: 0.75rem;
-  color: #e63946;
+  color: var(--color-error-dark);
   margin-top: 0.5rem;
   padding: 0.25rem 0.5rem;
-  background: #fee;
+  background: var(--color-error-light);
   border-radius: 4px;
   display: inline-block;
 }
@@ -82,8 +84,8 @@
 }
 
 .unavailable-badge {
-  background: #ffc107;
-  color: #fff;
+  background: var(--color-warning);
+  color: var(--color-background);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -98,15 +100,15 @@
 }
 
 .pricing-option {
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--color-border);
   border-radius: 6px;
   padding: 0.75rem;
   transition: all 0.2s ease;
 }
 
 .pricing-option.selected {
-  border-color: #1976d2;
-  background: #f0f7ff;
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
 }
 
 .pricing-option.disabled {
@@ -137,20 +139,20 @@
 .checkbox {
   width: 24px;
   height: 24px;
-  border: 2px solid #ccc;
+  border: 2px solid var(--color-border);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.2s ease;
-  background: white;
+  background: var(--color-surface-raised);
 }
 
 .select-button.selected .checkbox {
-  background: #1976d2;
-  border-color: #1976d2;
-  color: white;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-contrast);
 }
 
 .pricing-details {
@@ -162,13 +164,13 @@
 
 .serving-size {
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-text-primary);
   font-size: 0.95rem;
 }
 
 .price {
   font-weight: 600;
-  color: #1976d2;
+  color: var(--color-primary);
   font-size: 1rem;
 }
 
@@ -178,15 +180,15 @@
   align-items: center;
   margin-top: 0.75rem;
   padding-top: 0.75rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .quantity-adjuster {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-light);
   border-radius: 6px;
   padding: 0.25rem;
 }
@@ -195,18 +197,18 @@
   width: 32px;
   height: 32px;
   border: none;
-  background: #f5f5f5;
+  background: var(--color-surface-hover);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #1976d2;
+  color: var(--color-primary);
 }
 
 .qty-button:hover:not(:disabled) {
-  background: #e0e0e0;
+  background: var(--color-primary-light);
 }
 
 .qty-button:disabled {
@@ -219,37 +221,39 @@
   text-align: center;
   font-weight: 600;
   font-size: 1rem;
-  color: #1a1a1a;
+  color: var(--color-text-primary);
 }
 
 .item-total {
   font-weight: 700;
-  color: #1976d2;
+  color: var(--color-primary);
   font-size: 1.125rem;
 }
 
 .item-notes {
   margin-top: 0.75rem;
   padding-top: 0.75rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .notes-input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 0.875rem;
   transition: border-color 0.2s ease;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
 }
 
 .notes-input:focus {
   outline: none;
-  border-color: #1976d2;
+  border-color: var(--color-primary);
 }
 
 .notes-input::placeholder {
-  color: #999;
+  color: var(--color-grey-400);
 }
 
 /* Flat Order Summary */
@@ -258,11 +262,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--color-white);
+  background: linear-gradient(180deg, rgba(15, 20, 38, 0.85) 0%, rgba(15, 20, 38, 0.95) 100%);
   border-top: 2px solid var(--color-border);
   padding: var(--spacing-lg);
   margin-top: var(--spacing-xl);
   z-index: 10;
+  backdrop-filter: blur(12px);
 }
 
 .summary-content {
@@ -280,7 +285,7 @@
 
 .summary-label {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -292,14 +297,14 @@
 
 .total-label {
   font-size: 1rem;
-  color: #666;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .total-amount {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1976d2;
+  color: var(--color-primary);
 }
 
 @media (max-width: 768px) {
@@ -362,8 +367,8 @@
 
 .included-badge {
   display: inline-block;
-  background: #10b981;
-  color: white;
+  background: var(--color-success);
+  color: var(--color-text-contrast);
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 0.688rem;
@@ -380,19 +385,19 @@
 }
 
 .free-item {
-  color: #10b981;
+  color: var(--color-success);
   font-weight: 700;
   font-size: 1.125rem;
 }
 
 .partial-bundle {
-  color: #f59e0b;
+  color: var(--color-warning);
   font-weight: 600;
   font-size: 1rem;
 }
 
 .bundle-note {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   font-weight: 400;
 }

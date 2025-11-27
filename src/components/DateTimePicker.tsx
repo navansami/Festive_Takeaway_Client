@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
 import './DateTimePicker.css';
 
@@ -19,31 +20,53 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
+  const [calendarPosition, setCalendarPosition] = useState({ top: 0, left: 0 });
+  const dateButtonRef = React.useRef<HTMLButtonElement>(null);
+  const calendarRef = React.useRef<HTMLDivElement>(null);
 
-  // Generate time slots from 11:00 AM to 9:00 PM in 15-minute intervals
-  const generateTimeSlots = () => {
-    const slots: string[] = [];
-    for (let hour = 11; hour <= 21; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        // Stop at 21:00 (9:00 PM)
-        if (hour === 21 && minute > 0) break;
+  const updateCalendarPosition = () => {
+    if (dateButtonRef.current) {
+      const rect = dateButtonRef.current.getBoundingClientRect();
+      const calendarHeight = calendarRef.current?.offsetHeight || 350;
 
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        slots.push(timeString);
+      // Check if calendar would go off bottom, if so position above
+      let top = rect.bottom + 8;
+      if (top + calendarHeight > window.innerHeight) {
+        top = rect.top - calendarHeight - 8;
       }
+
+      setCalendarPosition({
+        top: top,
+        left: rect.left,
+      });
     }
-    return slots;
   };
 
-  const timeSlots = generateTimeSlots();
+  React.useEffect(() => {
+    if (showCalendar) {
+      // Calculate position after DOM renders
+      requestAnimationFrame(() => {
+        updateCalendarPosition();
+      });
 
-  // Format time for display (e.g., "14:30" -> "2:30 PM")
-  const formatTimeDisplay = (time: string) => {
+      window.addEventListener('scroll', updateCalendarPosition, true);
+      window.addEventListener('resize', updateCalendarPosition);
+
+      return () => {
+        window.removeEventListener('scroll', updateCalendarPosition, true);
+        window.removeEventListener('resize', updateCalendarPosition);
+      };
+    }
+  }, [showCalendar]);
+
+  // Validate and format time input (11:00 to 21:00)
+  const validateTime = (time: string) => {
     if (!time) return '';
     const [hours, minutes] = time.split(':').map(Number);
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
-    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+    if (isNaN(hours) || isNaN(minutes)) return selectedTime;
+    if (hours < 11 || hours > 21 || minutes < 0 || minutes > 59) return selectedTime;
+    if (hours === 21 && minutes > 0) return selectedTime;
+    return time;
   };
 
   // Get calendar days for the current month
@@ -155,6 +178,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           </label>
           <div className="date-input-wrapper">
             <button
+              ref={dateButtonRef}
               type="button"
               className="date-input"
               onClick={() => setShowCalendar(!showCalendar)}
@@ -163,57 +187,69 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
               <span>{formatSelectedDate()}</span>
             </button>
 
-            {showCalendar && (
-              <div className="calendar-dropdown">
-                <div className="calendar-header">
-                  <button
-                    type="button"
-                    className="calendar-nav"
-                    onClick={handlePreviousMonth}
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <div className="calendar-month">
-                    {monthNames[currentMonth.getMonth()]}{' '}
-                    {currentMonth.getFullYear()}
-                  </div>
-                  <button
-                    type="button"
-                    className="calendar-nav"
-                    onClick={handleNextMonth}
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
-
-                <div className="calendar-grid">
-                  {dayNames.map((day) => (
-                    <div key={day} className="calendar-day-name">
-                      {day}
+            {showCalendar &&
+              createPortal(
+                <div
+                  ref={calendarRef}
+                  className="calendar-dropdown"
+                  style={{
+                    position: 'fixed',
+                    top: `${calendarPosition.top}px`,
+                    left: `${calendarPosition.left}px`,
+                    zIndex: 10000,
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="calendar-header">
+                    <button
+                      type="button"
+                      className="calendar-nav"
+                      onClick={handlePreviousMonth}
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <div className="calendar-month">
+                      {monthNames[currentMonth.getMonth()]}{' '}
+                      {currentMonth.getFullYear()}
                     </div>
-                  ))}
-                  {getCalendarDays().map((date, index) =>
-                    date ? (
-                      <button
-                        key={index}
-                        type="button"
-                        className={`calendar-day ${
-                          isToday(date) ? 'today' : ''
-                        } ${isSelected(date) ? 'selected' : ''} ${
-                          !allowPastDates && isPastDate(date) ? 'disabled' : ''
-                        }`}
-                        onClick={() => (allowPastDates || !isPastDate(date)) && handleDateSelect(date)}
-                        disabled={!allowPastDates && isPastDate(date)}
-                      >
-                        {date.getDate()}
-                      </button>
-                    ) : (
-                      <div key={index} className="calendar-day empty" />
-                    )
-                  )}
-                </div>
-              </div>
-            )}
+                    <button
+                      type="button"
+                      className="calendar-nav"
+                      onClick={handleNextMonth}
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
+
+                  <div className="calendar-grid">
+                    {dayNames.map((day) => (
+                      <div key={day} className="calendar-day-name">
+                        {day}
+                      </div>
+                    ))}
+                    {getCalendarDays().map((date, index) =>
+                      date ? (
+                        <button
+                          key={index}
+                          type="button"
+                          className={`calendar-day ${
+                            isToday(date) ? 'today' : ''
+                          } ${isSelected(date) ? 'selected' : ''} ${
+                            !allowPastDates && isPastDate(date) ? 'disabled' : ''
+                          }`}
+                          onClick={() => (allowPastDates || !isPastDate(date)) && handleDateSelect(date)}
+                          disabled={!allowPastDates && isPastDate(date)}
+                        >
+                          {date.getDate()}
+                        </button>
+                      ) : (
+                        <div key={index} className="calendar-day empty" />
+                      )
+                    )}
+                  </div>
+                </div>,
+                document.body
+              )}
           </div>
         </div>
 
@@ -221,22 +257,19 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <div className="datetime-field">
           <label className="form-label">
             Collection Time <span className="required">*</span>
+            <span className="time-hint">(11:00 - 21:00)</span>
           </label>
           <div className="time-input-wrapper">
             <Clock size={18} className="time-icon" />
-            <select
+            <input
+              type="time"
               value={selectedTime}
-              onChange={(e) => onTimeChange(e.target.value)}
-              className="time-select"
+              onChange={(e) => onTimeChange(validateTime(e.target.value))}
+              className="time-input"
+              min="11:00"
+              max="21:00"
               required
-            >
-              <option value="">Select time</option>
-              {timeSlots.map((time) => (
-                <option key={time} value={time}>
-                  {formatTimeDisplay(time)}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
       </div>

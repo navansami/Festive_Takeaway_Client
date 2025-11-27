@@ -35,6 +35,7 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(OrderStatus.PENDING);
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(PaymentStatus.PENDING);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
@@ -63,8 +64,14 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
     setShowAddGuestForm(true);
   };
 
+  const subtotal = orderItems.reduce((sum, item) => sum + item.totalPrice, 0);
+
+  const calculateDiscountAmount = () => {
+    return (subtotal * discount) / 100;
+  };
+
   const calculateTotal = () => {
-    return orderItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    return Math.max(0, subtotal - calculateDiscountAmount());
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,6 +105,7 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
           phone: guestDetails.phone,
         },
         items: orderItems,
+        discountPercentage: discount,
         totalAmount: calculateTotal(),
         collectionDate,
         collectionTime,
@@ -121,6 +129,7 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
       setOrderStatus(OrderStatus.PENDING);
       setPaymentStatus(PaymentStatus.PENDING);
       setOrderItems([]);
+      setDiscount(0);
       setShowAddGuestForm(false);
 
       onSuccess();
@@ -344,6 +353,42 @@ const OrderModal: React.FC<OrderModalProps> = ({ isOpen, onClose, onSuccess }) =
                   />
                   <span>Other</span>
                 </label>
+              </div>
+            </div>
+
+            {/* Discount & Summary */}
+            <div className="form-section">
+              <h3 className="section-title">Order Summary</h3>
+              <div className="order-summary">
+                <div className="summary-row">
+                  <span>Subtotal</span>
+                  <span className="summary-amount">AED {subtotal.toFixed(2)}</span>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="discount">Discount Percentage (%)</label>
+                  <div className="discount-input">
+                    <input
+                      type="number"
+                      id="discount"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      value={discount}
+                      onChange={(e) => setDiscount(Math.min(Math.max(parseFloat(e.target.value) || 0, 0), 100))}
+                      placeholder="0.0"
+                    />
+                    <span className="currency">%</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="discount-amount">
+                      Saving: AED {calculateDiscountAmount().toFixed(2)}
+                    </div>
+                  )}
+                </div>
+                <div className="summary-row total">
+                  <span>Total</span>
+                  <span className="summary-amount">AED {calculateTotal().toFixed(2)}</span>
+                </div>
               </div>
             </div>
           </div>

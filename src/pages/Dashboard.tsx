@@ -60,13 +60,26 @@ interface DashboardStats {
   }>;
 }
 
+interface MonthlyCategoryBreakdown {
+  [key: string]: {
+    name: string;
+    October: number;
+    November: number;
+    December: number;
+    January: number;
+    total: number;
+  };
+}
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [monthlyCategories, setMonthlyCategories] = useState<MonthlyCategoryBreakdown | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardStats();
+    fetchMonthlyCategoryBreakdown();
   }, []);
 
   const fetchDashboardStats = async () => {
@@ -75,6 +88,15 @@ const Dashboard: React.FC = () => {
       setStats(response.stats);
     } catch (err) {
       console.error('Failed to fetch dashboard stats:', err);
+    }
+  };
+
+  const fetchMonthlyCategoryBreakdown = async () => {
+    try {
+      const response = await api.getMonthlyCategoryBreakdown() as { success: boolean; monthlyCategoryBreakdown: MonthlyCategoryBreakdown };
+      setMonthlyCategories(response.monthlyCategoryBreakdown);
+    } catch (err) {
+      console.error('Failed to fetch monthly category breakdown:', err);
     } finally {
       setLoading(false);
     }
@@ -134,23 +156,6 @@ const Dashboard: React.FC = () => {
 
       {/* Stats Cards Grid */}
       <div className="stats-grid-new">
-        {/* Total Revenue Card */}
-        <div className="stat-card-new gradient-primary">
-          <div className="stat-card-icon">
-            <DollarSign size={20} />
-          </div>
-          <div className="stat-card-content">
-            <p className="stat-label-new">Total Revenue</p>
-            <h2 className="stat-value-new">{formatCurrency(stats.totalRevenue)}</h2>
-            <div className="stat-footer">
-              <span className="stat-badge success">
-                <ArrowUpRight size={14} />
-                Total orders value
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* Total Orders Card */}
         <div className="stat-card-new gradient-info">
           <div className="stat-card-icon">
@@ -172,9 +177,23 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="stat-card-content">
             <p className="stat-label-new">Pending Orders</p>
-            <h2 className="stat-value-new">{stats.statusCounts.PENDING || 0}</h2>
+            <h2 className="stat-value-new">{stats.statusCounts.pending || 0}</h2>
             <div className="stat-footer">
               <span className="stat-badge warning">Needs attention</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Confirmed Orders Card */}
+        <div className="stat-card-new gradient-info">
+          <div className="stat-card-icon">
+            <CheckCircle size={20} />
+          </div>
+          <div className="stat-card-content">
+            <p className="stat-label-new">Confirmed Orders</p>
+            <h2 className="stat-value-new">{stats.statusCounts.confirmed || 0}</h2>
+            <div className="stat-footer">
+              <span className="stat-badge info">Awaiting collection</span>
             </div>
           </div>
         </div>
@@ -186,7 +205,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="stat-card-content">
             <p className="stat-label-new">Collected Orders</p>
-            <h2 className="stat-value-new">{stats.statusCounts.COLLECTED || 0}</h2>
+            <h2 className="stat-value-new">{stats.statusCounts.collected || 0}</h2>
             <div className="stat-footer">
               <span className="stat-badge success">
                 <ArrowUpRight size={14} />
@@ -195,35 +214,75 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Average Order Value Card */}
-        <div className="stat-card-new gradient-purple">
-          <div className="stat-card-icon">
-            <TrendingUp size={20} />
-          </div>
-          <div className="stat-card-content">
-            <p className="stat-label-new">Avg Order Value</p>
-            <h2 className="stat-value-new">{formatCurrency(stats.averageOrderValue)}</h2>
-            <div className="stat-footer">
-              <span className="stat-badge purple">Per order</span>
-            </div>
-          </div>
+      {/* Revenue Breakdown Section */}
+      <div className="revenue-breakdown-card">
+        <div className="chart-header">
+          <h3>Revenue Breakdown</h3>
+          <p>Payment status overview</p>
         </div>
-
-        {/* Total Guests Card */}
-        <div className="stat-card-new gradient-secondary">
-          <div className="stat-card-icon">
-            <Users size={20} />
+        <div className="revenue-grid">
+          <div className="revenue-item">
+            <div className="revenue-label">Total Revenue</div>
+            <div className="revenue-value primary">{formatCurrency(stats.totalRevenue)}</div>
+            <div className="revenue-subtext">All orders value</div>
           </div>
-          <div className="stat-card-content">
-            <p className="stat-label-new">Total Guests</p>
-            <h2 className="stat-value-new">{stats.totalGuests}</h2>
-            <div className="stat-footer">
-              <span className="stat-badge secondary">Registered</span>
-            </div>
+          <div className="revenue-item">
+            <div className="revenue-label">Revenue Paid</div>
+            <div className="revenue-value success">{formatCurrency(stats.totalPaid)}</div>
+            <div className="revenue-subtext">Received payments</div>
+          </div>
+          <div className="revenue-item">
+            <div className="revenue-label">Revenue Pending</div>
+            <div className="revenue-value warning">{formatCurrency(stats.totalRevenue - stats.totalPaid)}</div>
+            <div className="revenue-subtext">Awaiting payment</div>
+          </div>
+          <div className="revenue-item">
+            <div className="revenue-label">Average per Order</div>
+            <div className="revenue-value info">{formatCurrency(stats.averageOrderValue)}</div>
+            <div className="revenue-subtext">Mean order value</div>
           </div>
         </div>
       </div>
+
+      {/* Monthly Category Breakdown Table */}
+      {monthlyCategories && (
+        <div className="chart-card full-width">
+          <div className="chart-header">
+            <h3>Items Sold by Category & Month</h3>
+            <p>Quantity breakdown by category and collection month</p>
+          </div>
+          <div className="table-container">
+            <table className="category-breakdown-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>October</th>
+                  <th>November</th>
+                  <th>December</th>
+                  <th>January</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(monthlyCategories)
+                  .filter(([key]) => key !== 'roasts') // Exclude the overall roasts category
+                  .map(([key, data]) => (
+                    <tr key={key}>
+                      <td className="category-name">{data.name}</td>
+                      <td className="category-value">{data.October}</td>
+                      <td className="category-value">{data.November}</td>
+                      <td className="category-value">{data.December}</td>
+                      <td className="category-value">{data.January}</td>
+                      <td className="category-total">{data.total}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Charts Row */}
       <div className="charts-row">

@@ -208,6 +208,10 @@ class ApiService {
     return this.request('/analytics/dashboard');
   }
 
+  async getMonthlyCategoryBreakdown() {
+    return this.request('/analytics/monthly-categories');
+  }
+
   async getAnalytics(startDate: string, endDate: string) {
     return this.request(
       `/analytics?startDate=${startDate}&endDate=${endDate}`

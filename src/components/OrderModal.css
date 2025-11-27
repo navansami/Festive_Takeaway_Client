@@ -1,47 +1,61 @@
-/* Mobile-First Order Modal - Flat Design - NO NESTED SCROLLING */
+/* Order Modal - Full Screen Layout */
 
 .order-modal-form {
   display: flex;
   flex-direction: column;
-  position: relative;
-  /* Remove min-height to allow natural flow */
+  height: 100%;
+  width: 100%;
 }
 
-/* Mobile First - Single column, natural flow */
 .order-modal-content {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
   flex: 1;
+  overflow: hidden;
+  padding: var(--spacing-lg);
 }
 
-/* NO overflow on mobile - let parent handle scroll */
 .order-modal-left {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .order-modal-right {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
-/* Flat Form Sections */
+/* Form Sections */
 .form-section {
-  background-color: var(--color-grey-50);
+  background: var(--gradient-card);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  backdrop-filter: blur(12px);
+  transition: border-color var(--transition-base);
+}
+
+.form-section:nth-child(3) {
+  z-index: 500;
+}
+
+.form-section:hover {
+  border-color: var(--color-primary);
 }
 
 .section-title {
-  font-size: 0.938rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-md) 0;
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .add-guest-form {
@@ -62,7 +76,7 @@
   color: var(--color-text-primary);
 }
 
-/* Mobile First - Single column grid */
+/* Form Grid */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -73,30 +87,48 @@
   grid-column: 1 / -1;
 }
 
+/* Form Group */
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
 .form-group label {
-  font-size: 0.813rem;
-  font-weight: 500;
+  font-size: 0.8125rem;
+  font-weight: 600;
   color: var(--color-text-primary);
-  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .form-group input,
-.form-group textarea {
-  padding: 0.75rem;
+.form-group textarea,
+.form-group select {
+  padding: 0.875rem 1rem;
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-size: 16px;
-  transition: border-color var(--transition-base);
-  background-color: var(--color-white);
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  transition: all var(--transition-base);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--color-grey-400);
+}
+
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group select:hover {
+  border-color: var(--color-primary);
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-primary-light);
@@ -104,8 +136,16 @@
 
 .form-group textarea {
   resize: vertical;
-  font-family: inherit;
   min-height: 80px;
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 1rem;
+  padding-right: 2.75rem;
 }
 
 .required {
@@ -113,29 +153,28 @@
   margin-left: 0.25rem;
 }
 
-/* Payment Methods - Mobile First */
+/* Payment Methods */
 .payment-methods {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
 }
 
-/* Flat Payment Options */
+/* Payment Options */
 .payment-option {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   padding: var(--spacing-md);
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--transition-fast);
-  background-color: var(--color-white);
+  background-color: var(--color-surface-raised);
+  transition: all var(--transition-base);
 }
 
 .payment-option:hover {
   border-color: var(--color-primary);
-  background-color: var(--color-primary-50);
 }
 
 .payment-option input[type='radio'] {
@@ -143,75 +182,160 @@
   height: 18px;
   cursor: pointer;
   accent-color: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .payment-option span {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--color-text-primary);
 }
 
 .payment-option:has(input:checked) {
   border-color: var(--color-primary);
-  background-color: var(--color-primary-50);
+  background-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
-/* Error Message - Flat */
+/* Order Summary */
+.order-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+}
+
+.summary-amount {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.summary-row.total {
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.summary-row.total .summary-amount {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
+
+.discount-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.discount-input .currency {
+  position: absolute;
+  right: 1rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.discount-input input {
+  padding-right: 2.5rem;
+}
+
+.discount-amount {
+  font-size: 0.8125rem;
+  color: #10b981;
+  margin-top: var(--spacing-sm);
+  font-weight: 500;
+}
+
+/* Error Message */
 .error-message {
   background-color: var(--color-error-light);
   color: var(--color-error-dark);
-  padding: var(--spacing-md);
+  padding: var(--spacing-lg);
   border: 1px solid var(--color-error);
-  border-radius: var(--radius-md);
-  margin: var(--spacing-md) 0;
-  font-size: 0.875rem;
+  border-left: 4px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-lg) 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
 }
 
-/* Modal Actions - FIXED at absolute bottom */
+/* Modal Actions - Button Bar */
 .modal-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   padding: var(--spacing-lg);
-  border-top: 2px solid var(--color-border);
-  background-color: var(--color-white);
-
-  /* FIXED POSITIONING - not sticky */
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-
-  /* Remove negative margins that were for sticky */
-  margin: 0;
+  border-top: 1px solid var(--color-border);
+  background: linear-gradient(180deg, rgba(15, 20, 38, 0.9) 0%, rgba(15, 20, 38, 0.95) 100%);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
 }
 
 .modal-actions button {
-  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
 }
 
-/* Tablet and up - Two column layout with overflow */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+/* Tablet and up - Two column layout */
 @media (min-width: 768px) {
   .order-modal-content {
     display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: var(--spacing-xl);
+    grid-template-columns: 380px 1fr;
+    gap: var(--spacing-lg);
     overflow: hidden;
+    padding: var(--spacing-lg);
   }
 
-  /* Now add scrolling on desktop */
   .order-modal-left {
     overflow-y: auto;
-    padding-right: var(--spacing-md);
+    max-height: calc(100vh - 220px);
   }
 
   .order-modal-right {
     overflow-y: auto;
-    padding-right: var(--spacing-md);
+    max-height: calc(100vh - 220px);
   }
 
-  /* Scrollbar Styling for desktop */
+  /* Custom Scrollbars */
   .order-modal-left::-webkit-scrollbar,
   .order-modal-right::-webkit-scrollbar {
     width: 6px;
@@ -219,55 +343,50 @@
 
   .order-modal-left::-webkit-scrollbar-track,
   .order-modal-right::-webkit-scrollbar-track {
-    background-color: var(--color-grey-100);
-    border-radius: var(--radius-sm);
+    background: transparent;
   }
 
   .order-modal-left::-webkit-scrollbar-thumb,
   .order-modal-right::-webkit-scrollbar-thumb {
-    background-color: var(--color-grey-300);
-    border-radius: var(--radius-sm);
-  }
-
-  .order-modal-left::-webkit-scrollbar-thumb:hover,
-  .order-modal-right::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-grey-400);
+    background: var(--color-primary);
+    border-radius: 3px;
   }
 
   .form-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   .payment-methods {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .modal-actions {
-    /* On desktop: absolute positioning within modal-content */
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  .form-section {
+    padding: var(--spacing-md);
+  }
 
+  .modal-actions {
     flex-direction: row;
     justify-content: flex-end;
-    padding: var(--spacing-xl);
     gap: var(--spacing-md);
   }
 
   .modal-actions button {
     width: auto;
-    min-width: 140px;
+    min-width: 120px;
   }
 }
 
 /* Desktop and up */
 @media (min-width: 1024px) {
   .order-modal-content {
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 420px 1fr;
   }
 
   .payment-methods {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-section {
+    padding: var(--spacing-lg);
   }
 }

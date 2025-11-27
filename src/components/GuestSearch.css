@@ -6,12 +6,12 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-text-primary);
   font-size: 14px;
 }
 
 .required {
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .selected-guest {
@@ -19,8 +19,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  background-color: #f9fafb;
-  border: 2px solid #10b981;
+  background: var(--color-surface-raised);
+  border: 2px solid var(--color-success);
   border-radius: 8px;
   gap: 16px;
 }
@@ -36,11 +36,11 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #e5e7eb;
+  background-color: var(--color-surface-hover);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
@@ -50,7 +50,7 @@
 
 .guest-name {
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-primary);
   margin-bottom: 4px;
   display: flex;
   align-items: center;
@@ -63,12 +63,12 @@
 
 .guest-contact {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .guest-stats {
   font-size: 12px;
-  color: #059669;
+  color: var(--color-success);
   font-weight: 500;
   margin-top: 2px;
 }
@@ -87,30 +87,32 @@
 .search-icon {
   position: absolute;
   left: 12px;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
   padding: 12px 12px 12px 44px;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 15px;
   transition: all 0.2s;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .btn-icon {
   position: absolute;
   right: 8px;
-  background-color: #3b82f6;
-  color: white;
+  background-image: linear-gradient(120deg, var(--color-primary) 0%, var(--color-accent-pink) 100%);
+  color: var(--color-text-contrast);
   border: none;
   border-radius: 6px;
   padding: 8px;
@@ -122,7 +124,7 @@
 }
 
 .btn-icon:hover {
-  background-color: #2563eb;
+  transform: scale(1.05);
 }
 
 /* Flat Dropdown */
@@ -131,7 +133,7 @@
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background-color: var(--color-white);
+  background-color: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   max-height: 400px;
@@ -145,12 +147,13 @@
   gap: 12px;
   padding: 12px;
   border: none;
-  background: white;
+  background: var(--color-surface-raised);
   width: 100%;
   text-align: left;
   cursor: pointer;
   transition: background-color 0.2s;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
 }
 
 .dropdown-item:last-child {
@@ -158,13 +161,13 @@
 }
 
 .dropdown-item:hover {
-  background-color: #f9fafb;
+  background-color: var(--color-surface-hover);
 }
 
 .dropdown-item.loading,
 .dropdown-item.empty {
   justify-content: center;
-  color: #6b7280;
+  color: var(--color-text-secondary);
   cursor: default;
   flex-direction: column;
   gap: 8px;
@@ -173,12 +176,12 @@
 
 .dropdown-item.empty p {
   margin: 0 0 8px 0;
-  color: #6b7280;
+  color: var(--color-text-secondary);
 }
 
 .dropdown-item.loading:hover,
 .dropdown-item.empty:hover {
-  background-color: white;
+  background-color: var(--color-surface-raised);
 }
 
 .btn-sm {
@@ -192,22 +195,23 @@
 }
 
 .btn-primary {
-  background-color: #3b82f6;
-  color: white;
+  background-image: linear-gradient(120deg, var(--color-primary) 0%, var(--color-accent-pink) 100%);
+  color: var(--color-text-contrast);
 }
 
 .btn-primary:hover {
-  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary {
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
 }
 
 .btn-secondary:hover {
-  background-color: #e5e7eb;
+  background-color: var(--color-surface-hover);
 }
 
 /* Mobile responsiveness */

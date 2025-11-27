@@ -18,7 +18,7 @@
 
 /* Mobile First - Full screen modal */
 .modal-content {
-  background-color: var(--color-white);
+  background-color: var(--color-surface);
   width: 100%;
   height: 100%;
   max-height: 100vh;
@@ -29,11 +29,18 @@
 
 .modal-small,
 .modal-medium,
-.modal-large,
+.modal-large {
+  width: 100%;
+  height: auto;
+  max-height: 100vh;
+}
+
 .modal-fullscreen {
   width: 100%;
   height: 100%;
   max-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Flat Modal Header */
@@ -44,7 +51,8 @@
   padding: var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
-  background-color: var(--color-white);
+  background: linear-gradient(135deg, rgba(15, 20, 38, 0.95) 0%, rgba(15, 20, 38, 0.85) 100%);
+  backdrop-filter: blur(8px);
   z-index: 10;
 }
 
@@ -69,8 +77,9 @@
 }
 
 .modal-close:hover {
-  background-color: var(--color-grey-100);
-  color: var(--color-text-primary);
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  border-radius: var(--radius-lg);
 }
 
 /* New wrapper to contain scrolling */
@@ -84,10 +93,20 @@
 
 .modal-body {
   padding: var(--spacing-lg);
-  padding-bottom: 120px; /* Space for fixed action buttons */
   overflow-y: auto;
   flex: 1;
   -webkit-overflow-scrolling: touch;
+}
+
+.modal-fullscreen .modal-body-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+.modal-fullscreen .modal-body {
+  padding: var(--spacing-lg);
+  overflow: hidden;
+  flex: 1;
 }
 
 /* Tablet and up - Centered modal with border */
@@ -124,8 +143,10 @@
   .modal-fullscreen {
     width: 100%;
     height: 100%;
-    max-width: 1400px;
-    max-height: calc(100vh - 4rem);
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
   }
 
   .modal-header {
@@ -138,6 +159,9 @@
 
   .modal-body {
     padding: var(--spacing-xl);
-    padding-bottom: 100px; /* Space for action buttons on desktop */
+  }
+
+  .modal-fullscreen .modal-body {
+    padding: var(--spacing-lg);
   }
 }
