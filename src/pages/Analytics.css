@@ -53,3 +53,81 @@
     width: auto;
   }
 }
+
+/* Items Report Table */
+.items-report-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.items-report-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 0.875rem;
+}
+
+.items-report-table th {
+  background-color: #d3d3d3;
+  color: #333;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #999;
+  white-space: nowrap;
+}
+
+.items-report-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.items-report-table tbody tr:nth-child(even) {
+  background-color: #f0f0f0;
+}
+
+.items-report-table tbody tr:hover {
+  background-color: #e8e8e8;
+}
+
+.items-report-table td.number {
+  text-align: center;
+  font-weight: 500;
+}
+
+.items-report-table td.total-cell {
+  font-weight: bold;
+  background-color: #f5f5f5;
+  border-right: 2px solid #999;
+}
+
+.items-report-table tr.grand-total-row {
+  background-color: #cccccc;
+  font-weight: bold;
+  border-top: 2px solid #999;
+}
+
+.items-report-table tr.grand-total-row td {
+  padding: 0.875rem 0.75rem;
+  border-bottom: 2px solid #999;
+}
+
+/* Mobile - adjust form to handle export buttons better */
+@media (max-width: 768px) {
+  .export-form {
+    grid-template-columns: 1fr;
+  }
+
+  .export-form button {
+    width: 100%;
+  }
+
+  .items-report-table table {
+    font-size: 0.75rem;
+  }
+
+  .items-report-table th,
+  .items-report-table td {
+    padding: 0.5rem 0.375rem;
+  }
+}

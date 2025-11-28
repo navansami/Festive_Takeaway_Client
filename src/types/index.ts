@@ -55,6 +55,19 @@ export const MenuCategory = {
 } as const;
 export type MenuCategory = typeof MenuCategory[keyof typeof MenuCategory];
 
+export interface ItemMonthlyBreakdown {
+  name: string;
+  servingSize: string;
+  [month: string]: string | number;
+  total: number;
+}
+
+export interface ItemsSoldByMonthResponse {
+  items: ItemMonthlyBreakdown[];
+  grandTotal: number;
+  monthsIncluded: string[];
+}
+
 export interface User {
   _id: string;
   name: string;

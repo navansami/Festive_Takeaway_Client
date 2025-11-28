@@ -244,6 +244,38 @@ class ApiService {
     document.body.removeChild(a);
   }
 
+  async getItemsSoldByMonth(startDate: string, endDate: string) {
+    return this.request(
+      `/analytics/items-sold-by-month?startDate=${startDate}&endDate=${endDate}`
+    );
+  }
+
+  async exportItemsReport(startDate: string, endDate: string) {
+    const token = localStorage.getItem('token');
+    const response = await fetch(
+      `${API_URL}/analytics/export-items-report?startDate=${startDate}&endDate=${endDate}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to export items report');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `items-sold-report-${startDate}-to-${endDate}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
+
   // User endpoints
   async getUsers() {
     return this.request('/users');

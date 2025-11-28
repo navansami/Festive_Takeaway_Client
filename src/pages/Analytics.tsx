@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../services/api';
 import { Download, Calendar, Clock } from 'lucide-react';
+import type { ItemsSoldByMonthResponse } from '../types';
 import './Analytics.css';
 
 const Analytics: React.FC = () => {
@@ -8,6 +9,12 @@ const Analytics: React.FC = () => {
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const [itemsStartDate, setItemsStartDate] = useState('');
+  const [itemsEndDate, setItemsEndDate] = useState('');
+  const [itemsData, setItemsData] = useState<ItemsSoldByMonthResponse | null>(null);
+  const [itemsLoading, setItemsLoading] = useState(false);
+  const [itemsError, setItemsError] = useState('');
 
   const handleExport = async () => {
     if (!startDate || !endDate) {
@@ -23,6 +30,42 @@ const Analytics: React.FC = () => {
       setError(err instanceof Error ? err.message : 'Failed to export orders');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFetchItemsReport = async () => {
+    if (!itemsStartDate || !itemsEndDate) {
+      setItemsError('Please select both start and end dates');
+      return;
+    }
+
+    try {
+      setItemsLoading(true);
+      setItemsError('');
+      const data = (await api.getItemsSoldByMonth(itemsStartDate, itemsEndDate)) as ItemsSoldByMonthResponse;
+      setItemsData(data);
+    } catch (err) {
+      setItemsError(err instanceof Error ? err.message : 'Failed to fetch items report');
+      setItemsData(null);
+    } finally {
+      setItemsLoading(false);
+    }
+  };
+
+  const handleExportItemsReport = async () => {
+    if (!itemsStartDate || !itemsEndDate) {
+      setItemsError('Please select both start and end dates');
+      return;
+    }
+
+    try {
+      setItemsLoading(true);
+      setItemsError('');
+      await api.exportItemsReport(itemsStartDate, itemsEndDate);
+    } catch (err) {
+      setItemsError(err instanceof Error ? err.message : 'Failed to export items report');
+    } finally {
+      setItemsLoading(false);
     }
   };
 
@@ -123,6 +166,110 @@ const Analytics: React.FC = () => {
             <span>This Month</span>
           </button>
         </div>
+      </div>
+
+      <div className="card mt-xl">
+        <h3>Items Sold by Month Report</h3>
+        <p className="mb-lg">
+          View and export a breakdown of items sold by month. Includes pending and confirmed orders only.
+        </p>
+
+        {itemsError && <div className="error-message mb-md">{itemsError}</div>}
+
+        <div className="export-form">
+          <div className="form-group">
+            <label htmlFor="itemsStartDate">Start Date</label>
+            <input
+              type="date"
+              id="itemsStartDate"
+              value={itemsStartDate}
+              onChange={(e) => setItemsStartDate(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="itemsEndDate">End Date</label>
+            <input
+              type="date"
+              id="itemsEndDate"
+              value={itemsEndDate}
+              onChange={(e) => setItemsEndDate(e.target.value)}
+            />
+          </div>
+
+          <button
+            className="btn-primary"
+            onClick={handleFetchItemsReport}
+            disabled={itemsLoading}
+          >
+            {itemsLoading ? 'Loading...' : 'View Report'}
+          </button>
+
+          <button
+            className="btn-secondary"
+            onClick={handleExportItemsReport}
+            disabled={itemsLoading || !itemsData}
+          >
+            {itemsLoading ? (
+              <span>Exporting...</span>
+            ) : (
+              <>
+                <Download size={18} />
+                <span>Export to Excel</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {itemsData && (
+          <div className="items-report-table mt-lg">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th>Serving Size</th>
+                  {itemsData.monthsIncluded.map((month) => (
+                    <th key={month}>{month}</th>
+                  ))}
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {itemsData.items.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.name}</td>
+                    <td>{item.servingSize}</td>
+                    {itemsData.monthsIncluded.map((month) => (
+                      <td key={month} className="number">
+                        {item[month] || 0}
+                      </td>
+                    ))}
+                    <td className="number total-cell">{item.total}</td>
+                  </tr>
+                ))}
+                <tr className="grand-total-row">
+                  <td colSpan={2}>
+                    <strong>GRAND TOTAL</strong>
+                  </td>
+                  {itemsData.monthsIncluded.map((month) => {
+                    const monthTotal = itemsData.items.reduce(
+                      (sum, item) => sum + (typeof item[month] === 'number' ? item[month] : 0),
+                      0
+                    );
+                    return (
+                      <td key={month} className="number">
+                        <strong>{monthTotal}</strong>
+                      </td>
+                    );
+                  })}
+                  <td className="number total-cell">
+                    <strong>{itemsData.grandTotal}</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
